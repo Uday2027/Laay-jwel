@@ -1,14 +1,14 @@
 import { PrismaClient } from '@prisma/client'
-import path from 'path'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined }
 
 function createPrismaClient() {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
-  const dbPath = path.join(process.cwd(), 'prisma', 'dev.db')
-  const adapter = new PrismaBetterSqlite3({ url: `file:${dbPath}` })
-  return new PrismaClient({ adapter } as Parameters<typeof PrismaClient>[0])
+  const connectionString = (process.env.DATABASE_URL ?? '').replace('?sslmode=require', '').replace('&sslmode=require', '')
+  const pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } })
+  const adapter = new PrismaPg(pool)
+  return new PrismaClient({ adapter })
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient()

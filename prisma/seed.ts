@@ -1,12 +1,17 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
 import bcrypt from 'bcryptjs'
-import path from 'path'
+import * as dotenv from 'dotenv'
 
-const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
+dotenv.config()
 
-const dbPath = path.join(process.cwd(), 'prisma', 'dev.db')
-const adapter = new PrismaBetterSqlite3({ url: `file:${dbPath}` })
-const prisma = new PrismaClient({ adapter } as any)
+const dbUrl = (process.env.DATABASE_URL ?? '').replace('?sslmode=require', '').replace('&sslmode=require', '')
+const pool = new Pool({ connectionString: dbUrl, ssl: { rejectUnauthorized: false } })
+
+const adapter = new PrismaPg(pool)
+const prisma = new PrismaClient({ adapter })
+
 
 async function main() {
   console.log('🌱 Seeding database...')

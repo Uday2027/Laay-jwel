@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
+
 
 model User {
   id        Int      @id @default(autoincrement())
@@ -27,7 +28,7 @@ model Product {
   slug        String      @unique
   description String
   price       Float
-  category    String      // BAGS | PURSES | JEWELRY | ACCESSORIES
+  category    String      // BRACELETS | EARRINGS | RINGS
   images      String      @default("[]") // JSON array of image paths
   stock       Int         @default(0)
   featured    Boolean     @default(false)
