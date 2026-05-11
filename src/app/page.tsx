@@ -133,9 +133,13 @@ export default function HomePage() {
             {categories.map(cat => (
               <Link key={cat.slug} href={`/shop?category=${cat.slug}`} className="cat-card" style={{ display: 'block', textDecoration: 'none' }}>
                 {/* Pure image — no text overlay */}
-                <div className="cat-card-img-wrap" style={{ position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', aspectRatio: '3/4', boxShadow: 'var(--shadow-md)' }}>
-                  <img src={cat.image} alt={cat.name} className="cat-card-img" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)' }} />
-                  {/* Subtle hover tint only — no persistent text */}
+                <div className="cat-card-img-wrap" style={{ position: 'relative', width: '100%', paddingTop: '133%', borderRadius: '12px', overflow: 'hidden', background: 'var(--cream-dark)', boxShadow: '0 4px 16px rgba(44,40,38,0.12)' }}>
+                  <img
+                    src={cat.image} alt={cat.name}
+                    className="cat-card-img"
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.6s ease' }}
+                    onError={e => { (e.target as HTMLImageElement).src = '/placeholder.jpg' }}
+                  />
                   <div className="cat-card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(44,40,38,0)', transition: 'background 0.4s ease' }} />
                 </div>
                 {/* Text BELOW the image */}
