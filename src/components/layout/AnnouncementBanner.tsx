@@ -45,11 +45,11 @@ export default function AnnouncementBanner() {
         top: 0,
         left: 0,
         right: 0,
-        minHeight: '44px',
+        minHeight: '36px',
         zIndex: 60,
         background: 'linear-gradient(90deg, var(--charcoal) 0%, #3a3330 50%, var(--charcoal) 100%)',
         color: 'var(--cream)',
-        padding: '0.5rem 1rem',
+        padding: '0.35rem 1rem',
         textAlign: 'center',
         fontSize: '0.72rem',
         letterSpacing: '0.14em',
@@ -62,10 +62,10 @@ export default function AnnouncementBanner() {
       {/* gold shimmer line at bottom */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', maxWidth: '85%', margin: '0 auto', lineHeight: 1.5, flexWrap: 'wrap', padding: '0.2rem 0' }}>
-        <span style={{ color: 'var(--gold)', fontSize: '0.65rem', flexShrink: 0 }}>✦</span>
-        <span>{text}</span>
-        <span style={{ color: 'var(--gold)', fontSize: '0.65rem', flexShrink: 0 }}>✦</span>
+      <div style={{ maxWidth: '85%', margin: '0 auto', lineHeight: 1.4 }}>
+        <span style={{ color: 'var(--gold)', fontSize: '0.65rem', marginRight: '0.6rem', verticalAlign: 'middle' }}>✦</span>
+        <span style={{ verticalAlign: 'middle' }}>{text}</span>
+        <span style={{ color: 'var(--gold)', fontSize: '0.65rem', marginLeft: '0.6rem', verticalAlign: 'middle' }}>✦</span>
       </div>
 
       <button
