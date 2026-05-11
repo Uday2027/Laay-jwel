@@ -120,40 +120,78 @@ export default function HomePage() {
       {/* ─── CATEGORIES ─────────────────────────────────────────── */}
       <section className="section" style={{ background: 'var(--white)' }}>
         <div className="container">
-          <div className="text-center" style={{ marginBottom: '3.5rem' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+          <div className="text-center" style={{ marginBottom: '2.5rem' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
               <div style={{ height: '1px', width: '40px', background: 'var(--gold)' }} />
               <span style={{ fontSize: '0.65rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--gold)' }}>Our Jewelry</span>
               <div style={{ height: '1px', width: '40px', background: 'var(--gold)' }} />
             </div>
             <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, marginTop: '0.25rem' }}>Shop by Collection</h2>
           </div>
-          {/* Category cards — desktop: 3 grid cols | mobile: horizontal scroll */}
-          <div className="cat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+
+          {/* Grid — minmax(0,1fr) is critical: prevents columns from overflowing */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+            gap: 'clamp(0.4rem, 1.5vw, 1.5rem)',
+            width: '100%',
+          }}>
             {categories.map(cat => (
-              <Link key={cat.slug} href={`/shop?category=${cat.slug}`} className="cat-card" style={{ display: 'block', textDecoration: 'none' }}>
-                {/* Pure image — no text overlay */}
+              <Link
+                key={cat.slug}
+                href={`/shop?category=${cat.slug}`}
+                className="cat-card"
+                style={{ display: 'block', textDecoration: 'none', minWidth: 0 }}
+              >
+                {/* Square image — always fits regardless of column width */}
                 <div
-                  className="cat-card-img-wrap cat-img-mobile"
-                  style={{ position: 'relative', width: '100%', paddingTop: '133%', borderRadius: '12px', overflow: 'hidden', background: 'var(--cream-dark)', boxShadow: '0 4px 16px rgba(44,40,38,0.12)' }}
+                  className="cat-card-img-wrap"
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    paddingTop: '100%',
+                    borderRadius: 'clamp(6px, 1.5vw, 12px)',
+                    overflow: 'hidden',
+                    background: 'var(--cream-dark)',
+                    boxShadow: '0 4px 16px rgba(44,40,38,0.12)',
+                  }}
                 >
                   <img
-                    src={cat.image} alt={cat.name}
+                    src={cat.image}
+                    alt={cat.name}
                     className="cat-card-img"
-                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.6s ease' }}
+                    style={{
+                      position: 'absolute', top: 0, left: 0,
+                      width: '100%', height: '100%',
+                      objectFit: 'cover', display: 'block',
+                      transition: 'transform 0.6s ease',
+                    }}
                     onError={e => { (e.target as HTMLImageElement).src = '/placeholder.jpg' }}
                   />
                   <div className="cat-card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(44,40,38,0)', transition: 'background 0.4s ease' }} />
                 </div>
-                {/* Text BELOW the image */}
-                <div style={{ padding: 'clamp(0.4rem,1.5vw,1.1rem) 0.25rem 0.25rem', textAlign: 'center' }}>
-                  <p style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(0.7rem, 2vw, 1.35rem)', fontWeight: 400, color: 'var(--charcoal)', marginBottom: '0.2rem', letterSpacing: '0.01em' }}>{cat.name}</p>
-                  <div className="cat-desc-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
-                    <div style={{ height: '1px', width: '14px', background: 'var(--gold)' }} />
-                    <p style={{ fontSize: '0.55rem', letterSpacing: '0.16em', color: 'var(--text-muted)', textTransform: 'uppercase', margin: 0 }}>{cat.desc}</p>
-                    <div style={{ height: '1px', width: '14px', background: 'var(--gold)' }} />
-                  </div>
-                  <span className="cat-shop-link" style={{ fontSize: '0.62rem', letterSpacing: '0.13em', textTransform: 'uppercase', color: 'var(--gold)', borderBottom: '1px solid rgba(201,169,110,0.5)', paddingBottom: '2px' }}>Shop →</span>
+
+                {/* Compact label below */}
+                <div style={{ paddingTop: 'clamp(0.4rem, 1.5vw, 0.9rem)', textAlign: 'center' }}>
+                  <p style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: 'clamp(0.75rem, 2.5vw, 1.3rem)',
+                    fontWeight: 400,
+                    color: 'var(--charcoal)',
+                    margin: '0 0 clamp(0.2rem, 0.8vw, 0.5rem)',
+                    lineHeight: 1.2,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}>{cat.name}</p>
+                  <span style={{
+                    fontSize: 'clamp(0.5rem, 1.5vw, 0.65rem)',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                    color: 'var(--gold)',
+                    borderBottom: '1px solid rgba(201,169,110,0.5)',
+                    paddingBottom: '1px',
+                  }}>Shop →</span>
                 </div>
               </Link>
             ))}
