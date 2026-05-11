@@ -133,7 +133,10 @@ export default function HomePage() {
             {categories.map(cat => (
               <Link key={cat.slug} href={`/shop?category=${cat.slug}`} className="cat-card" style={{ display: 'block', textDecoration: 'none' }}>
                 {/* Pure image — no text overlay */}
-                <div className="cat-card-img-wrap" style={{ position: 'relative', width: '100%', paddingTop: '133%', borderRadius: '12px', overflow: 'hidden', background: 'var(--cream-dark)', boxShadow: '0 4px 16px rgba(44,40,38,0.12)' }}>
+                <div
+                  className="cat-card-img-wrap cat-img-mobile"
+                  style={{ position: 'relative', width: '100%', paddingTop: '133%', borderRadius: '12px', overflow: 'hidden', background: 'var(--cream-dark)', boxShadow: '0 4px 16px rgba(44,40,38,0.12)' }}
+                >
                   <img
                     src={cat.image} alt={cat.name}
                     className="cat-card-img"
@@ -143,14 +146,14 @@ export default function HomePage() {
                   <div className="cat-card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(44,40,38,0)', transition: 'background 0.4s ease' }} />
                 </div>
                 {/* Text BELOW the image */}
-                <div style={{ padding: '1rem 0.25rem 0', textAlign: 'center' }}>
-                  <p style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(1rem, 3vw, 1.4rem)', fontWeight: 400, color: 'var(--charcoal)', marginBottom: '0.3rem', letterSpacing: '0.02em' }}>{cat.name}</p>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.6rem' }}>
-                    <div style={{ height: '1px', width: '20px', background: 'var(--gold)' }} />
-                    <p style={{ fontSize: '0.6rem', letterSpacing: '0.18em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>{cat.desc}</p>
-                    <div style={{ height: '1px', width: '20px', background: 'var(--gold)' }} />
+                <div style={{ padding: 'clamp(0.4rem,1.5vw,1.1rem) 0.25rem 0.25rem', textAlign: 'center' }}>
+                  <p style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(0.7rem, 2vw, 1.35rem)', fontWeight: 400, color: 'var(--charcoal)', marginBottom: '0.2rem', letterSpacing: '0.01em' }}>{cat.name}</p>
+                  <div className="cat-desc-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
+                    <div style={{ height: '1px', width: '14px', background: 'var(--gold)' }} />
+                    <p style={{ fontSize: '0.55rem', letterSpacing: '0.16em', color: 'var(--text-muted)', textTransform: 'uppercase', margin: 0 }}>{cat.desc}</p>
+                    <div style={{ height: '1px', width: '14px', background: 'var(--gold)' }} />
                   </div>
-                  <span style={{ fontSize: '0.68rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', borderBottom: '1px solid rgba(201,169,110,0.5)', paddingBottom: '2px' }}>Shop Now →</span>
+                  <span className="cat-shop-link" style={{ fontSize: '0.62rem', letterSpacing: '0.13em', textTransform: 'uppercase', color: 'var(--gold)', borderBottom: '1px solid rgba(201,169,110,0.5)', paddingBottom: '2px' }}>Shop →</span>
                 </div>
               </Link>
             ))}

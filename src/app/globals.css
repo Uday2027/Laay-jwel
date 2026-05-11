@@ -207,24 +207,25 @@ textarea.input { resize: vertical; min-height: 100px; }
   .container { padding: 0 1rem; }
   .section { padding: 3.5rem 0; }
 
-  /* Categories: horizontal scroll on tablet/mobile — no overflow */
+  /* Categories: 3 compact columns on mobile — no scrolling */
   .cat-grid {
-    display: flex !important;
-    flex-direction: row !important;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    gap: 0.875rem !important;
-    padding-bottom: 0.75rem;
-    /* hide scrollbar */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    display: grid !important;
+    flex-direction: unset !important;
+    overflow-x: visible !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem !important;
+    padding-bottom: 0 !important;
+    scroll-snap-type: none !important;
   }
-  .cat-grid::-webkit-scrollbar { display: none; }
   .cat-grid > * {
-    flex: 0 0 72%;
-    scroll-snap-align: start;
+    flex: unset !important;
+    scroll-snap-align: unset !important;
   }
+  /* Make category images square on mobile so they're smaller */
+  .cat-img-mobile { padding-top: 100% !important; }
+  /* Simplify text below cards on mobile */
+  .cat-desc-row { display: none; }
+  .cat-shop-link { font-size: 0.55rem !important; }
 
   /* Products: 2 per row on mobile */
   .grid-auto { grid-template-columns: repeat(2, 1fr); gap: 0.875rem; }
@@ -238,11 +239,12 @@ textarea.input { resize: vertical; min-height: 100px; }
 
 @media (max-width: 480px) {
   :root { --nav-height: 56px; }
-  .container { padding: 0 0.875rem; }
+  .container { padding: 0 0.625rem; }
   .section { padding: 3rem 0; }
 
-  /* Category cards take 80% width so user can peek the next */
-  .cat-grid > * { flex: 0 0 78%; }
+  /* Category cards: square ratio on tiny screens */
+  .cat-img-mobile { padding-top: 100% !important; }
+  .cat-grid { gap: 0.375rem !important; }
 
   /* Products: 2 per row */
   .grid-auto { grid-template-columns: repeat(2, 1fr); gap: 0.625rem; }
