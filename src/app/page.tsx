@@ -104,7 +104,7 @@ export default function HomePage() {
             Bracelets, earrings and rings of extraordinary beauty — curated for the woman who knows her worth.
           </p>
 
-          <div ref={ctaRef} style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div ref={ctaRef} className="hero-cta-row" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link href="/shop" className="btn btn-primary btn-lg">Explore Collection</Link>
             <Link href="/shop?category=RINGS" className="btn btn-outline-gold btn-lg">Shop Rings</Link>
           </div>
@@ -137,15 +137,15 @@ export default function HomePage() {
                   <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(44,40,38,0.6) 0%, transparent 55%)' }} />
                   {/* Bottom text */}
                   <div style={{ position: 'absolute', bottom: '1.5rem', left: '1.5rem', right: '1.5rem' }}>
-                    <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', fontWeight: 300, color: 'var(--white)', marginBottom: '0.25rem' }}>{cat.name}</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <p style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(1rem, 3vw, 1.6rem)', fontWeight: 300, color: 'var(--white)', marginBottom: '0.25rem' }}>{cat.name}</p>
+                    <div className="hidden-mobile" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <div style={{ height: '1px', width: '24px', background: 'var(--gold)' }} />
                       <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase' }}>{cat.desc}</p>
                     </div>
                   </div>
                 </div>
                 {/* Shop link */}
-                <div style={{ textAlign: 'center' }}>
+                <div className="hidden-mobile" style={{ textAlign: 'center' }}>
                   <span style={{ fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', borderBottom: '1px solid rgba(201,169,110,0.4)', paddingBottom: '2px' }}>Shop {cat.name} →</span>
                 </div>
               </Link>
@@ -161,7 +161,7 @@ export default function HomePage() {
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
         <div className="container" style={{ position: 'relative' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '2.5rem', textAlign: 'center' }}>
+          <div className="perk-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '2rem', textAlign: 'center' }}>
             {[
               { icon: '👑', title: 'Member Discount', desc: 'Sign in for an instant 5% off every order' },
               { icon: '💎', title: 'Bundle Reward', desc: 'Buy 3+ pieces and save an additional 5%' },
