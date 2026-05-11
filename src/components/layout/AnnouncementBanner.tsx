@@ -62,11 +62,11 @@ export default function AnnouncementBanner() {
       {/* gold shimmer line at bottom */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
 
-      <span style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <span style={{ color: 'var(--gold)', fontSize: '0.65rem' }}>✦</span>
-        {text}
-        <span style={{ color: 'var(--gold)', fontSize: '0.65rem' }}>✦</span>
-      </span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', maxWidth: '85%', margin: '0 auto', lineHeight: 1.5, flexWrap: 'wrap', padding: '0.2rem 0' }}>
+        <span style={{ color: 'var(--gold)', fontSize: '0.65rem', flexShrink: 0 }}>✦</span>
+        <span>{text}</span>
+        <span style={{ color: 'var(--gold)', fontSize: '0.65rem', flexShrink: 0 }}>✦</span>
+      </div>
 
       <button
         onClick={() => setVisible(false)}

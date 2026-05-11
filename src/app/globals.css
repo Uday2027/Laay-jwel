@@ -200,6 +200,9 @@ textarea.input { resize: vertical; min-height: 100px; }
 @media (max-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(3, 1fr); }
   .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  
+  /* Checkout: stack order summary below form on tablet/mobile */
+  .checkout-grid { grid-template-columns: 1fr !important; }
 }
 
 @media (max-width: 768px) {
