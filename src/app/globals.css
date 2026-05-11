@@ -229,7 +229,7 @@ textarea.input { resize: vertical; min-height: 100px; }
 
   /* Products: 2 per row on mobile */
   .grid-auto { grid-template-columns: repeat(2, 1fr); gap: 0.875rem; }
-  .grid-2 { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .grid-2 { grid-template-columns: 1fr; gap: 1.5rem; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 0.875rem; }
   .grid-3 { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
 
@@ -249,7 +249,7 @@ textarea.input { resize: vertical; min-height: 100px; }
   /* Products: 2 per row */
   .grid-auto { grid-template-columns: repeat(2, 1fr); gap: 0.625rem; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 0.625rem; }
-  .grid-2 { grid-template-columns: repeat(2, 1fr); gap: 0.625rem; }
+  .grid-2 { grid-template-columns: 1fr; gap: 1.5rem; }
   .grid-3 { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
 
   h1 { font-size: clamp(1.5rem, 8vw, 2.2rem); }

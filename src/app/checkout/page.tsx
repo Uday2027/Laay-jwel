@@ -71,7 +71,7 @@ export default function CheckoutPage() {
 
   return (
     <div style={{ paddingTop: 'var(--header-offset)', minHeight: '100vh', background: 'var(--cream)' }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '3rem 2rem', display: 'grid', gridTemplateColumns: '1fr 380px', gap: '3rem', alignItems: 'start' }}>
+      <div className="checkout-grid" style={{ maxWidth: '1100px', margin: '0 auto', padding: '3rem 2rem', display: 'grid', gridTemplateColumns: '1fr 380px', gap: '3rem', alignItems: 'start' }}>
 
         {/* Left: Form */}
         <div>
