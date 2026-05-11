@@ -310,6 +310,10 @@ tbody tr:last-child td { border-bottom: none; }
 .cat-card:hover .cat-card-img {
   transform: scale(1.07);
 }
+/* Subtle dark tint appears only on hover */
+.cat-card:hover .cat-card-overlay {
+  background: rgba(44,40,38,0.15) !important;
+}
 
 /* ── Mobile polish ─────────────────────────────────────── */
 @media (max-width: 768px) {

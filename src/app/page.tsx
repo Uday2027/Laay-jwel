@@ -132,21 +132,21 @@ export default function HomePage() {
           <div className="grid-3">
             {categories.map(cat => (
               <Link key={cat.slug} href={`/shop?category=${cat.slug}`} className="cat-card" style={{ display: 'block', textDecoration: 'none' }}>
-                <div className="cat-card-img-wrap" style={{ position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', aspectRatio: '3/4', marginBottom: '1.25rem', boxShadow: 'var(--shadow-md)' }}>
+                {/* Pure image — no text overlay */}
+                <div className="cat-card-img-wrap" style={{ position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', aspectRatio: '3/4', boxShadow: 'var(--shadow-md)' }}>
                   <img src={cat.image} alt={cat.name} className="cat-card-img" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)' }} />
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(44,40,38,0.6) 0%, transparent 55%)' }} />
-                  {/* Bottom text */}
-                  <div style={{ position: 'absolute', bottom: '1.5rem', left: '1.5rem', right: '1.5rem' }}>
-                    <p style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(1rem, 3vw, 1.6rem)', fontWeight: 300, color: 'var(--white)', marginBottom: '0.25rem' }}>{cat.name}</p>
-                    <div className="hidden-mobile" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <div style={{ height: '1px', width: '24px', background: 'var(--gold)' }} />
-                      <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase' }}>{cat.desc}</p>
-                    </div>
-                  </div>
+                  {/* Subtle hover tint only — no persistent text */}
+                  <div className="cat-card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(44,40,38,0)', transition: 'background 0.4s ease' }} />
                 </div>
-                {/* Shop link */}
-                <div className="hidden-mobile" style={{ textAlign: 'center' }}>
-                  <span style={{ fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', borderBottom: '1px solid rgba(201,169,110,0.4)', paddingBottom: '2px' }}>Shop {cat.name} →</span>
+                {/* Text BELOW the image */}
+                <div style={{ padding: '1rem 0.25rem 0', textAlign: 'center' }}>
+                  <p style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(1rem, 3vw, 1.4rem)', fontWeight: 400, color: 'var(--charcoal)', marginBottom: '0.3rem', letterSpacing: '0.02em' }}>{cat.name}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.6rem' }}>
+                    <div style={{ height: '1px', width: '20px', background: 'var(--gold)' }} />
+                    <p style={{ fontSize: '0.6rem', letterSpacing: '0.18em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>{cat.desc}</p>
+                    <div style={{ height: '1px', width: '20px', background: 'var(--gold)' }} />
+                  </div>
+                  <span style={{ fontSize: '0.68rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', borderBottom: '1px solid rgba(201,169,110,0.5)', paddingBottom: '2px' }}>Shop Now →</span>
                 </div>
               </Link>
             ))}
