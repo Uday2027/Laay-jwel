@@ -71,12 +71,12 @@ export default function CheckoutPage() {
 
   return (
     <div style={{ paddingTop: 'var(--header-offset)', minHeight: '100vh', background: 'var(--cream)' }}>
-      <div className="checkout-grid" style={{ maxWidth: '1100px', margin: '0 auto', padding: '3rem 2rem', display: 'grid', gridTemplateColumns: '1fr 380px', gap: '3rem', alignItems: 'start' }}>
+      <div className="checkout-grid" style={{ maxWidth: '1100px', margin: '0 auto', padding: 'clamp(1rem, 5vw, 3rem) clamp(0.75rem, 3vw, 2rem)', display: 'grid', gridTemplateColumns: '1fr 380px', gap: 'clamp(1.5rem, 5vw, 3rem)', alignItems: 'start' }}>
 
         {/* Left: Form */}
         <div>
           {/* Steps */}
-          <div style={{ display: 'flex', gap: '0', marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '2.5rem' }}>
             {['Information', 'Payment', 'Review'].map((s, i) => (
               <div key={s} style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{
@@ -231,7 +231,7 @@ export default function CheckoutPage() {
 
         {/* Right: Order Summary */}
         <div style={{ position: 'sticky', top: 'calc(var(--header-offset) + 2rem)' }}>
-          <div style={{ background: 'var(--white)', borderRadius: 'var(--radius-lg)', padding: '1.75rem', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ background: 'var(--white)', borderRadius: 'var(--radius-lg)', padding: 'clamp(1.25rem, 4vw, 1.75rem)', boxShadow: 'var(--shadow-md)' }}>
             <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, marginBottom: '1.25rem' }}>Order Summary</h3>
             {cart.map(item => (
               <div key={item.productId} style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', alignItems: 'center' }}>
