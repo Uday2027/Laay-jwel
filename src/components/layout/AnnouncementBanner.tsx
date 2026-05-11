@@ -1,10 +1,11 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 export default function AnnouncementBanner() {
   const [text, setText] = useState('')
   const [active, setActive] = useState(false)
   const [visible, setVisible] = useState(true)
+  const bannerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     fetch('/api/settings/public').then(r => r.ok ? r.json() : null).then(data => {
@@ -14,18 +15,31 @@ export default function AnnouncementBanner() {
 
   useEffect(() => {
     const el = document.documentElement
-    if (active && text && visible) {
-      el.style.setProperty('--banner-height', '44px')
-    } else {
+    if (!active || !text || !visible) {
+      el.style.setProperty('--banner-height', '0px')
+      return
+    }
+    if (!bannerRef.current) return
+
+    const observer = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        el.style.setProperty('--banner-height', `${entry.contentRect.height}px`)
+      }
+    })
+    
+    observer.observe(bannerRef.current)
+    
+    return () => {
+      observer.disconnect()
       el.style.setProperty('--banner-height', '0px')
     }
-    return () => el.style.setProperty('--banner-height', '0px')
   }, [active, text, visible])
 
   if (!active || !text || !visible) return null
 
   return (
     <div
+      ref={bannerRef}
       style={{
         position: 'fixed',
         top: 0,
