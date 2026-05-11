@@ -36,7 +36,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
 body {
   font-family: var(--font-sans);
@@ -207,13 +207,30 @@ textarea.input { resize: vertical; min-height: 100px; }
   .container { padding: 0 1rem; }
   .section { padding: 3.5rem 0; }
 
-  /* Categories: always 3 in a row on mobile */
-  .grid-3 { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+  /* Categories: horizontal scroll on tablet/mobile — no overflow */
+  .cat-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    gap: 0.875rem !important;
+    padding-bottom: 0.75rem;
+    /* hide scrollbar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .cat-grid::-webkit-scrollbar { display: none; }
+  .cat-grid > * {
+    flex: 0 0 72%;
+    scroll-snap-align: start;
+  }
 
   /* Products: 2 per row on mobile */
   .grid-auto { grid-template-columns: repeat(2, 1fr); gap: 0.875rem; }
   .grid-2 { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 0.875rem; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
 
   h1 { font-size: clamp(1.8rem, 7vw, 3rem); }
   h2 { font-size: clamp(1.4rem, 5vw, 2.2rem); }
@@ -224,16 +241,14 @@ textarea.input { resize: vertical; min-height: 100px; }
   .container { padding: 0 0.875rem; }
   .section { padding: 3rem 0; }
 
-  /* Categories: STILL 3 in a row, just smaller */
-  .grid-3 {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-  }
+  /* Category cards take 80% width so user can peek the next */
+  .cat-grid > * { flex: 0 0 78%; }
 
   /* Products: 2 per row */
   .grid-auto { grid-template-columns: repeat(2, 1fr); gap: 0.625rem; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 0.625rem; }
   .grid-2 { grid-template-columns: repeat(2, 1fr); gap: 0.625rem; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
 
   h1 { font-size: clamp(1.5rem, 8vw, 2.2rem); }
   h2 { font-size: clamp(1.2rem, 6vw, 1.8rem); }

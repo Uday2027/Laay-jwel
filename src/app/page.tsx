@@ -128,8 +128,8 @@ export default function HomePage() {
             </div>
             <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, marginTop: '0.25rem' }}>Shop by Collection</h2>
           </div>
-          {/* 3-column grid for 3 categories */}
-          <div className="grid-3">
+          {/* Category cards — desktop: 3 grid cols | mobile: horizontal scroll */}
+          <div className="cat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
             {categories.map(cat => (
               <Link key={cat.slug} href={`/shop?category=${cat.slug}`} className="cat-card" style={{ display: 'block', textDecoration: 'none' }}>
                 {/* Pure image — no text overlay */}
