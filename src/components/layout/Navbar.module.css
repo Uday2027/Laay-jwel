@@ -1,6 +1,6 @@
 .navbar {
   position: fixed;
-  top: 0;
+  top: var(--banner-height);
   left: 0;
   right: 0;
   z-index: 40;
@@ -8,7 +8,7 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid transparent;
-  transition: all 0.4s ease;
+  transition: top 0.3s ease, all 0.4s ease;
   height: var(--nav-height);
 }
 .navbar.scrolled {

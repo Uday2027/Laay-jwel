@@ -68,7 +68,7 @@ export default function HomePage() {
       <section ref={heroRef} style={{
         minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: `linear-gradient(155deg, #FDFAF7 0%, var(--cream-dark) 55%, var(--blush) 100%)`,
-        paddingTop: 'var(--nav-height)', position: 'relative', overflow: 'hidden', textAlign: 'center',
+        paddingTop: 'var(--header-offset)', position: 'relative', overflow: 'hidden', textAlign: 'center',
       }}>
         {/* Large decorative circles */}
         <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.12 }} viewBox="0 0 1400 900" fill="none">

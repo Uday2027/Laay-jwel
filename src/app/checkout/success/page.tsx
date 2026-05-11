@@ -8,7 +8,7 @@ function SuccessContent() {
   const orderNumber = searchParams.get('order') || ''
 
   return (
-    <div style={{ paddingTop: 'var(--nav-height)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--cream)' }}>
+    <div style={{ paddingTop: 'var(--header-offset)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--cream)' }}>
       <div style={{ textAlign: 'center', maxWidth: '560px', padding: '2rem' }}>
         <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(201,169,110,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem', fontSize: '2rem' }}>✓</div>
         <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--charcoal)' }}>Order Placed!</h1>

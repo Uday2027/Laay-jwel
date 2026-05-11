@@ -35,7 +35,7 @@ export default function AccountPage() {
 
   if (user) {
     return (
-      <div style={{ paddingTop: 'var(--nav-height)', minHeight: '100vh', background: 'var(--cream)' }}>
+      <div style={{ paddingTop: 'var(--header-offset)', minHeight: '100vh', background: 'var(--cream)' }}>
         <div style={{ background: 'var(--cream-dark)', padding: '4rem 0 3rem', textAlign: 'center' }}>
           <span style={{ fontSize: '0.7rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--gold)' }}>My Account</span>
           <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, marginTop: '0.5rem' }}>Welcome, {user.name.split(' ')[0]}</h1>
@@ -87,7 +87,7 @@ export default function AccountPage() {
   }
 
   return (
-    <div style={{ paddingTop: 'var(--nav-height)', minHeight: '100vh', background: 'var(--cream)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ paddingTop: 'var(--header-offset)', minHeight: '100vh', background: 'var(--cream)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ width: '100%', maxWidth: '440px', padding: '2rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '2rem' }}>{tab === 'login' ? 'Welcome Back' : 'Create Account'}</h1>

@@ -28,7 +28,7 @@ export default function CheckoutPage() {
 
   if (cart.length === 0 && step !== 3) {
     return (
-      <div style={{ paddingTop: 'calc(var(--nav-height) + 4rem)', textAlign: 'center', padding: '8rem 2rem' }}>
+      <div style={{ paddingTop: 'calc(var(--header-offset) + 4rem)', textAlign: 'center', padding: '8rem 2rem' }}>
         <h2 style={{ fontFamily: 'var(--font-serif)', marginBottom: '1rem' }}>Your cart is empty</h2>
         <a href="/shop" className="btn btn-primary">Shop Now</a>
       </div>
@@ -70,7 +70,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div style={{ paddingTop: 'var(--nav-height)', minHeight: '100vh', background: 'var(--cream)' }}>
+    <div style={{ paddingTop: 'var(--header-offset)', minHeight: '100vh', background: 'var(--cream)' }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '3rem 2rem', display: 'grid', gridTemplateColumns: '1fr 380px', gap: '3rem', alignItems: 'start' }}>
 
         {/* Left: Form */}
@@ -230,7 +230,7 @@ export default function CheckoutPage() {
         </div>
 
         {/* Right: Order Summary */}
-        <div style={{ position: 'sticky', top: 'calc(var(--nav-height) + 2rem)' }}>
+        <div style={{ position: 'sticky', top: 'calc(var(--header-offset) + 2rem)' }}>
           <div style={{ background: 'var(--white)', borderRadius: 'var(--radius-lg)', padding: '1.75rem', boxShadow: 'var(--shadow-md)' }}>
             <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, marginBottom: '1.25rem' }}>Order Summary</h3>
             {cart.map(item => (

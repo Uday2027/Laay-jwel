@@ -63,7 +63,7 @@ function ShopContent() {
     <>
       {/* Header */}
       <div style={{
-        paddingTop: 'var(--nav-height)',
+        paddingTop: 'var(--header-offset)',
         background: hero
           ? `linear-gradient(to right, var(--cream-dark) 40%, transparent 100%)`
           : 'var(--cream-dark)',
@@ -123,5 +123,5 @@ function ShopContent() {
 }
 
 export default function ShopPage() {
-  return <Suspense fallback={<div style={{ paddingTop: 'var(--nav-height)', minHeight: '60vh' }} />}><ShopContent /></Suspense>
+  return <Suspense fallback={<div style={{ paddingTop: 'var(--header-offset)', minHeight: '60vh' }} />}><ShopContent /></Suspense>
 }

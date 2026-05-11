@@ -39,7 +39,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   }
 
   return (
-    <div style={{ paddingTop: 'var(--nav-height)' }}>
+    <div style={{ paddingTop: 'var(--header-offset)' }}>
       <div className="container section">
         <div className="grid-2" style={{ gap: '4rem', alignItems: 'start' }}>
           {/* Images */}
