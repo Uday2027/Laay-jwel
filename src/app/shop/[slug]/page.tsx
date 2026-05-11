@@ -61,7 +61,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           </div>
 
           {/* Info */}
-          <div>
+          <div style={{ padding: '0 clamp(0.5rem, 4vw, 2rem)' }}>
             <span className="badge badge-gold" style={{ marginBottom: '1rem' }}>{product.category}</span>
             <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', lineHeight: 1.2, marginBottom: '1rem' }}>{product.name}</h1>
 
