@@ -15,7 +15,7 @@ export default function AnnouncementBanner() {
   useEffect(() => {
     const el = document.documentElement
     if (active && text && visible) {
-      el.style.setProperty('--banner-height', '36px')
+      el.style.setProperty('--banner-height', '44px')
     } else {
       el.style.setProperty('--banner-height', '0px')
     }
@@ -31,11 +31,11 @@ export default function AnnouncementBanner() {
         top: 0,
         left: 0,
         right: 0,
-        height: '36px',
+        minHeight: '44px',
         zIndex: 60,
         background: 'linear-gradient(90deg, var(--charcoal) 0%, #3a3330 50%, var(--charcoal) 100%)',
         color: 'var(--cream)',
-        padding: '0 1rem',
+        padding: '0.5rem 1rem',
         textAlign: 'center',
         fontSize: '0.72rem',
         letterSpacing: '0.14em',
