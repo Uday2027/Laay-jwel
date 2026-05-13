@@ -26,15 +26,6 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   const user = await getAuthUserFromRequest(req)
   if (!isAdmin(user)) return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
   const { id } = await params
-  const productId = parseInt(id)
-
-  try {
-    await prisma.$transaction([
-      prisma.orderItem.deleteMany({ where: { productId } }),
-      prisma.product.delete({ where: { id: productId } }),
-    ])
-    return NextResponse.json({ message: 'Deleted' })
-  } catch {
-    return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 })
-  }
+  await prisma.product.delete({ where: { id: parseInt(id) } })
+  return NextResponse.json({ message: 'Deleted' })
 }

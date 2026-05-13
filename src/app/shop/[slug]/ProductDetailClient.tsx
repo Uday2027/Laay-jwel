@@ -15,13 +15,31 @@ interface RelatedProduct {
   images: string; category: string; stock: number; featured: boolean;
 }
 
+interface Review {
+  id: number; name: string; email: string | null; rating: number; comment: string; createdAt: Date | string;
+}
+
+function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
+  return (
+    <div style={{ display: 'flex', gap: 2 }}>
+      {[1, 2, 3, 4, 5].map((star) => (
+        <svg key={star} width={size} height={size} viewBox="0 0 24 24" fill={star <= rating ? '#C9A96E' : 'rgba(201,169,110,0.2)'}>
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+        </svg>
+      ))}
+    </div>
+  )
+}
+
 export default function ProductDetailClient({
   product,
   related,
+  reviews: initialReviews,
   isAdmin,
 }: {
   product: Product
   related: RelatedProduct[]
+  reviews: Review[]
   isAdmin: boolean
 }) {
   const [selectedImg, setSelectedImg] = useState(0)
@@ -89,7 +107,11 @@ export default function ProductDetailClient({
               <span style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', color: 'var(--gold)' }}>৳{product.price.toLocaleString()}</span>
             </div>
 
-            <p style={{ lineHeight: 1.9, color: 'var(--text-secondary)', marginBottom: '2rem' }}>{product.description}</p>
+            {/* Description */}
+            <div style={{ marginBottom: '2rem' }}>
+              <p style={{ fontSize: '0.7rem', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.75rem' }}>Description</p>
+              <p style={{ lineHeight: 1.9, color: 'var(--text-secondary)' }}>{product.description}</p>
+            </div>
 
             {/* Stock */}
             <p style={{ fontSize: '0.8rem', letterSpacing: '0.08em', marginBottom: '1.5rem', color: product.stock > 0 ? 'var(--text-secondary)' : '#c0392b' }}>
@@ -112,6 +134,9 @@ export default function ProductDetailClient({
           </div>
         </div>
       </div>
+
+      {/* Reviews */}
+      <ReviewsSection productId={product.id} initialReviews={initialReviews} />
 
       {/* Related Products */}
       {related.length > 0 && (
@@ -151,6 +176,112 @@ export default function ProductDetailClient({
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+function ReviewsSection({ productId, initialReviews }: { productId: number; initialReviews: Review[] }) {
+  const [reviews, setReviews] = useState<Review[]>(initialReviews)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [rating, setRating] = useState(5)
+  const [comment, setComment] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
+  const average = reviews.length > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitting(true)
+    const res = await fetch(`/api/products/${productId}/reviews`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, rating, comment }),
+    })
+    if (res.ok) {
+      const data = await res.json()
+      setReviews(prev => [data.review, ...prev])
+      setName('')
+      setEmail('')
+      setRating(5)
+      setComment('')
+      setSubmitted(true)
+      setTimeout(() => setSubmitted(false), 3000)
+    }
+    setSubmitting(false)
+  }
+
+  return (
+    <div className="container" style={{ paddingBottom: '4rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+        <div style={{ height: '1px', flex: 1, background: 'var(--border)' }} />
+        <span style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold)' }}>Customer Reviews</span>
+        <div style={{ height: '1px', flex: 1, background: 'var(--border)' }} />
+      </div>
+
+      <div className="grid-2" style={{ gap: '3rem', alignItems: 'start' }}>
+        {/* Review List */}
+        <div>
+          {reviews.length === 0 ? (
+            <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>No reviews yet. Be the first to review!</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '2.5rem', color: 'var(--charcoal)' }}>{average.toFixed(1)}</span>
+                <div>
+                  <StarRating rating={Math.round(average)} size={20} />
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 4 }}>{reviews.length} review{reviews.length !== 1 ? 's' : ''}</p>
+                </div>
+              </div>
+              {reviews.map(r => (
+                <div key={r.id} style={{ borderBottom: '1px solid var(--border-light)', paddingBottom: '1.25rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <span style={{ fontWeight: 500, fontSize: '0.9rem' }}>{r.name}</span>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{new Date(r.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <StarRating rating={r.rating} size={14} />
+                  <p style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>{r.comment}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Review Form */}
+        <div className="admin-card" style={{ position: 'sticky', top: 'calc(var(--header-offset) + 2rem)' }}>
+          <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, marginBottom: '1.25rem' }}>Write a Review</h3>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="input-group">
+              <label className="label">Your Name *</label>
+              <input className="input" value={name} onChange={e => setName(e.target.value)} required />
+            </div>
+            <div className="input-group">
+              <label className="label">Email</label>
+              <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} />
+            </div>
+            <div className="input-group">
+              <label className="label">Rating *</label>
+              <div style={{ display: 'flex', gap: '0.5rem', padding: '0.5rem 0' }}>
+                {[1, 2, 3, 4, 5].map(star => (
+                  <button key={star} type="button" onClick={() => setRating(star)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                    <svg width={28} height={28} viewBox="0 0 24 24" fill={star <= rating ? '#C9A96E' : 'rgba(201,169,110,0.2)'}>
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="input-group">
+              <label className="label">Review *</label>
+              <textarea className="input" value={comment} onChange={e => setComment(e.target.value)} required rows={4} />
+            </div>
+            <button type="submit" className="btn btn-primary" disabled={submitting}>
+              {submitting ? 'Submitting...' : submitted ? '✓ Review Submitted!' : 'Submit Review'}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   )
 }

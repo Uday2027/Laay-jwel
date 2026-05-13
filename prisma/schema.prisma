@@ -33,6 +33,7 @@ model Product {
   stock       Int         @default(0)
   featured    Boolean     @default(false)
   orderItems  OrderItem[]
+  reviews     Review[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
@@ -73,9 +74,9 @@ model Order {
 model OrderItem {
   id        Int     @id @default(autoincrement())
   orderId   Int
-  order     Order   @relation(fields: [orderId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId Int
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int
   price     Float
 
@@ -110,4 +111,17 @@ model Settings {
   storeName   String @default("Laay")
   storeEmail  String @default("")
   storePhone  String @default("")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String
+  email     String?
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+
+  @@index([productId])
 }

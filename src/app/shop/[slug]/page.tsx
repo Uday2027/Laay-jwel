@@ -21,6 +21,15 @@ const getRelatedProducts = unstable_cache(
   { revalidate: 60 }
 )
 
+const getReviews = unstable_cache(
+  async (productId: number) => prisma.review.findMany({
+    where: { productId },
+    orderBy: { createdAt: 'desc' },
+  }),
+  ['product-reviews'],
+  { revalidate: 60 }
+)
+
 export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const [product, authUser] = await Promise.all([
@@ -30,8 +39,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   if (!product) notFound()
 
-  const related = await getRelatedProducts(product.category, product.id)
+  const [related, reviews] = await Promise.all([
+    getRelatedProducts(product.category, product.id),
+    getReviews(product.id),
+  ])
+
   const isAdmin = authUser?.role === 'ADMIN'
 
-  return <ProductDetailClient product={product} related={related} isAdmin={isAdmin} />
+  return <ProductDetailClient product={product} related={related} reviews={reviews} isAdmin={isAdmin} />
 }
