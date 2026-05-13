@@ -57,24 +57,26 @@ export default function AdminProducts() {
     loadProducts()
   }
 
-  async function resizeImage(file: File, maxWidth = 1200, quality = 0.85): Promise<Blob> {
-    return new Promise((resolve, reject) => {
+  async function resizeImage(file: File, maxWidth = 1200, quality = 0.85): Promise<Blob | null> {
+    return new Promise((resolve) => {
       const img = new Image()
+      const url = URL.createObjectURL(file)
       img.onload = () => {
+        URL.revokeObjectURL(url)
         const scale = Math.min(1, maxWidth / img.width)
         const canvas = document.createElement('canvas')
-        canvas.width = img.width * scale
-        canvas.height = img.height * scale
+        canvas.width = Math.round(img.width * scale)
+        canvas.height = Math.round(img.height * scale)
         const ctx = canvas.getContext('2d')
-        if (!ctx) return reject(new Error('Canvas not supported'))
+        if (!ctx) return resolve(null)
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-        canvas.toBlob(blob => {
-          if (blob) resolve(blob)
-          else reject(new Error('Compression failed'))
-        }, 'image/jpeg', quality)
+        canvas.toBlob(blob => resolve(blob), 'image/jpeg', quality)
       }
-      img.onerror = reject
-      img.src = URL.createObjectURL(file)
+      img.onerror = () => {
+        URL.revokeObjectURL(url)
+        resolve(null)
+      }
+      img.src = url
     })
   }
 
@@ -84,11 +86,15 @@ export default function AdminProducts() {
     setUploading(true)
     try {
       const resized = await Promise.all(
-        Array.from(files).map(file => resizeImage(file))
+        Array.from(files).map(async file => {
+          const blob = await resizeImage(file)
+          return blob ?? file
+        })
       )
       const formData = new FormData()
       resized.forEach((blob, i) => {
-        formData.append('files', blob, files[i].name.replace(/\.[^/.]+$/, '') + '.jpg')
+        const name = files[i].name.replace(/\.[^/.]+$/, '') + '.jpg'
+        formData.append('files', blob, name)
       })
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const data = await res.json()
@@ -97,8 +103,9 @@ export default function AdminProducts() {
       } else {
         alert(data.error || 'Upload failed')
       }
-    } catch {
-      alert('Upload failed')
+    } catch (err) {
+      console.error('Upload error:', err)
+      alert('Upload failed. Check console for details.')
     } finally {
       setUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''

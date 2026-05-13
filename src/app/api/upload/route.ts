@@ -4,10 +4,15 @@ import { getAuthUserFromRequest, isAdmin } from '@/lib/auth'
 import sharp from 'sharp'
 
 async function compressImage(buffer: Buffer): Promise<Buffer> {
-  return sharp(buffer)
-    .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
-    .jpeg({ quality: 80, progressive: true, mozjpeg: true })
-    .toBuffer()
+  try {
+    return await sharp(buffer)
+      .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 80, progressive: true, mozjpeg: true })
+      .toBuffer()
+  } catch (err) {
+    console.warn('Sharp compression failed, uploading original:', err)
+    return buffer
+  }
 }
 
 function uploadToCloudinary(buffer: Buffer, filename: string): Promise<{ secure_url: string; public_id: string }> {
