@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 interface Product { id: number; name: string; slug: string; price: number; category: string; stock: number; featured: boolean; images: string; description: string }
 const CATEGORIES = ['BRACELETS', 'EARRINGS', 'RINGS']
@@ -12,12 +13,21 @@ export default function AdminProducts() {
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const searchParams = useSearchParams()
 
   const loadProducts = useCallback(() => {
     fetch('/api/products').then(r => r.json()).then(d => setProducts(d.products || []))
   }, [])
 
   useEffect(() => { loadProducts() }, [loadProducts])
+
+  // Auto-open edit form if ?edit=<id> is present
+  useEffect(() => {
+    const editId = searchParams.get('edit')
+    if (!editId || products.length === 0) return
+    const p = products.find(prod => prod.id === parseInt(editId))
+    if (p) openEdit(p)
+  }, [searchParams, products])
 
   const openNew = () => { setEditing(null); setForm({ name: '', description: '', price: '', category: 'BRACELETS', stock: '', featured: false, images: [] }); setShowForm(true) }
   const openEdit = (p: Product) => {

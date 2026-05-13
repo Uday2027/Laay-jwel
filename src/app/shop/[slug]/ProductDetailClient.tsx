@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import Link from 'next/link'
 import { useApp } from '@/lib/context'
 import Image from 'next/image'
 import { cloudinaryUrl } from '@/lib/images'
@@ -9,7 +10,20 @@ interface Product {
   images: string; category: string; stock: number; featured: boolean;
 }
 
-export default function ProductDetailClient({ product }: { product: Product }) {
+interface RelatedProduct {
+  id: number; name: string; slug: string; price: number;
+  images: string; category: string; stock: number; featured: boolean;
+}
+
+export default function ProductDetailClient({
+  product,
+  related,
+  isAdmin,
+}: {
+  product: Product
+  related: RelatedProduct[]
+  isAdmin: boolean
+}) {
   const [selectedImg, setSelectedImg] = useState(0)
   const [added, setAdded] = useState(false)
   const { addToCart } = useApp()
@@ -61,7 +75,14 @@ export default function ProductDetailClient({ product }: { product: Product }) {
 
           {/* Info */}
           <div style={{ padding: '0 clamp(0.5rem, 4vw, 2rem)' }}>
-            <span className="badge badge-gold" style={{ marginBottom: '1rem' }}>{product.category}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+              <span className="badge badge-gold">{product.category}</span>
+              {isAdmin && (
+                <Link href={`/admin/products?edit=${product.id}`} className="btn btn-outline btn-sm" style={{ fontSize: '0.65rem' }}>
+                  ✎ Edit Product
+                </Link>
+              )}
+            </div>
             <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', lineHeight: 1.2, marginBottom: '1rem' }}>{product.name}</h1>
 
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '1.5rem' }}>
@@ -91,6 +112,45 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           </div>
         </div>
       </div>
+
+      {/* Related Products */}
+      {related.length > 0 && (
+        <div className="container" style={{ paddingBottom: '4rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+            <div style={{ height: '1px', flex: 1, background: 'var(--border)' }} />
+            <span style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold)' }}>You May Also Like</span>
+            <div style={{ height: '1px', flex: 1, background: 'var(--border)' }} />
+          </div>
+          <div className="grid-auto">
+            {related.map(p => {
+              const relImages = (() => { try { return JSON.parse(p.images) } catch { return [] } })()
+              const relImg = relImages[0] || '/placeholder.jpg'
+              return (
+                <Link key={p.id} href={`/shop/${p.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div style={{ background: 'var(--white)', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', transition: 'box-shadow 0.3s ease, transform 0.3s ease' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-md)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)' }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-sm)'; (e.currentTarget as HTMLDivElement).style.transform = '' }}
+                  >
+                    <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden', background: 'var(--cream-dark)' }}>
+                      <Image
+                        src={cloudinaryUrl(relImg, { width: 400 })}
+                        alt={p.name}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </div>
+                    <div style={{ padding: 'clamp(0.6rem, 2vw, 1rem)' }}>
+                      <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: 'clamp(0.82rem, 2vw, 1rem)', marginBottom: '0.25rem', color: 'var(--charcoal)', lineHeight: 1.3 }}>{p.name}</h3>
+                      <p style={{ color: 'var(--gold)', fontWeight: 500, fontSize: 'clamp(0.82rem, 2vw, 1rem)' }}>৳{p.price.toLocaleString()}</p>
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
