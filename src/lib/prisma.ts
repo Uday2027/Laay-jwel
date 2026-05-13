@@ -6,11 +6,18 @@ const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefi
 
 function createPrismaClient() {
   const connectionString = (process.env.DATABASE_URL ?? '').replace('?sslmode=require', '').replace('&sslmode=require', '')
-  const pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } })
+  const pool = new Pool({ 
+    connectionString, 
+    ssl: { rejectUnauthorized: false },
+    max: 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
+  })
   const adapter = new PrismaPg(pool)
   return new PrismaClient({ adapter })
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient()
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+// Always cache the Prisma client to avoid creating new DB connections per request
+globalForPrisma.prisma = prisma

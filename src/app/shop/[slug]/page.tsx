@@ -4,6 +4,8 @@ import { unstable_cache } from 'next/cache'
 import { getAuthUser } from '@/lib/auth'
 import ProductDetailClient from './ProductDetailClient'
 
+export const revalidate = 60
+
 const getProduct = unstable_cache(
   async (slug: string) => prisma.product.findUnique({ where: { slug } }),
   ['product-detail'],

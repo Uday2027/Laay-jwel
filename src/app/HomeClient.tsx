@@ -74,10 +74,10 @@ export default function HomeClient({ products }: { products: Product[] }) {
         </svg>
 
         <div className="hidden-mobile" style={{ position: 'absolute', right: '6%', top: '18%', width: '200px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 20px 60px rgba(44,40,38,0.18)', opacity: 0.9, transform: 'rotate(2deg)' }}>
-          <Image src="/products/bracelet-hero.jpg" alt="" width={400} height={500} style={{ width: '100%', height: 'auto', display: 'block' }} />
+          <Image src="/products/bracelet-hero.jpg" alt="" width={400} height={500} style={{ width: '100%', height: 'auto', display: 'block' }} priority sizes="200px" />
         </div>
         <div className="hidden-mobile" style={{ position: 'absolute', left: '5%', bottom: '18%', width: '155px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 20px 60px rgba(44,40,38,0.18)', opacity: 0.85, transform: 'rotate(-2.5deg)' }}>
-          <Image src="/products/ring-hero.jpg" alt="" width={310} height={388} style={{ width: '100%', height: 'auto', display: 'block' }} />
+          <Image src="/products/ring-hero.jpg" alt="" width={310} height={388} style={{ width: '100%', height: 'auto', display: 'block' }} priority sizes="155px" />
         </div>
 
         <div style={{ maxWidth: '680px', padding: '0 2rem', position: 'relative', zIndex: 1 }}>
@@ -124,7 +124,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
             {categories.map(cat => (
               <Link key={cat.slug} href={`/shop?category=${cat.slug}`} className="cat-card" style={{ display: 'block', textDecoration: 'none', minWidth: 0 }}>
                 <div className="cat-card-img-wrap" style={{ position: 'relative', width: '100%', paddingTop: '100%', borderRadius: 'clamp(6px, 1.5vw, 12px)', overflow: 'hidden', background: 'var(--cream-dark)', boxShadow: '0 4px 16px rgba(44,40,38,0.12)' }}>
-                  <Image src={cat.image} alt={cat.name} fill sizes="(max-width: 768px) 33vw, 33vw" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.6s ease' }} className="cat-card-img" />
+                  <Image src={cat.image} alt={cat.name} fill sizes="(max-width: 768px) 33vw, 33vw" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.6s ease' }} className="cat-card-img" loading="lazy" />
                   <div className="cat-card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(44,40,38,0)', transition: 'background 0.4s ease' }} />
                 </div>
                 <div style={{ paddingTop: 'clamp(0.4rem, 1.5vw, 0.9rem)', textAlign: 'center' }}>

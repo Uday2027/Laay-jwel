@@ -163,6 +163,7 @@ export default function ProductDetailClient({
                         fill
                         sizes="(max-width: 768px) 50vw, 25vw"
                         style={{ objectFit: 'cover' }}
+                        loading="lazy"
                       />
                     </div>
                     <div style={{ padding: 'clamp(0.6rem, 2vw, 1rem)' }}>

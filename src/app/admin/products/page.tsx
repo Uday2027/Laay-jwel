@@ -143,7 +143,7 @@ export default function AdminProducts() {
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.75rem' }}>
                   {form.images.map((img, i) => (
                     <div key={i} style={{ position: 'relative', width: 80, height: 100, borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: i === 0 ? '2px solid var(--gold)' : '2px solid var(--border-light)', flexShrink: 0 }}>
-                      <img src={img} alt="" width={80} height={100} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={img} alt="" width={80} height={100} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                       <div style={{ position: 'absolute', top: 2, right: 2, display: 'flex', gap: 2 }}>
                         <button onClick={() => moveImage(i, -1)} disabled={i === 0} style={{ width: 18, height: 18, fontSize: 10, lineHeight: 1, borderRadius: 2, border: 'none', background: 'rgba(0,0,0,0.6)', color: '#fff', cursor: i === 0 ? 'not-allowed' : 'pointer' }}>←</button>
                         <button onClick={() => moveImage(i, 1)} disabled={i === form.images.length - 1} style={{ width: 18, height: 18, fontSize: 10, lineHeight: 1, borderRadius: 2, border: 'none', background: 'rgba(0,0,0,0.6)', color: '#fff', cursor: i === form.images.length - 1 ? 'not-allowed' : 'pointer' }}>→</button>

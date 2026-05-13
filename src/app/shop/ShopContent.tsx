@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import ProductCard from '@/components/shop/ProductCard'
 import { useApp } from '@/lib/context'
 
@@ -35,18 +36,14 @@ export default function ShopContent({ initialProducts, initialCategory }: { init
   const { addToCart } = useApp()
 
   useEffect(() => {
-    if (category === initialCategory) {
-      setProducts(initialProducts)
-      return
-    }
     setLoading(true)
-    const params = new URLSearchParams()
-    if (category !== 'ALL') params.set('category', category)
-    fetch(`/api/products?${params}`).then(r => r.json()).then(d => {
-      setProducts(d.products || [])
-      setLoading(false)
-    })
-  }, [category, initialCategory, initialProducts])
+    let filtered = initialProducts
+    if (category !== 'ALL') {
+      filtered = initialProducts.filter(p => p.category === category)
+    }
+    setProducts(filtered)
+    setLoading(false)
+  }, [category, initialProducts])
 
   const sortedProducts = React.useMemo(() => {
     let p = [...products]
@@ -72,7 +69,7 @@ export default function ShopContent({ initialProducts, initialCategory }: { init
       }}>
         {hero && (
           <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '45%', overflow: 'hidden' }} className="hidden-mobile">
-            <img src={hero.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
+            <Image src={hero.image} alt="" fill sizes="45vw" style={{ objectFit: 'cover', objectPosition: 'center top' }} priority />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, var(--cream-dark) 0%, transparent 60%)' }} />
           </div>
         )}

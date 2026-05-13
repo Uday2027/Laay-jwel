@@ -28,6 +28,7 @@ export default function ProductCard({ product, onAddToCart }: Props) {
           fill
           sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
           style={{ objectFit: 'cover', transition: 'transform 0.5s ease' }}
+          loading="lazy"
           onMouseEnter={e => { (e.target as HTMLImageElement).style.transform = 'scale(1.06)' }}
           onMouseLeave={e => { (e.target as HTMLImageElement).style.transform = '' }}
           onError={e => { (e.target as HTMLImageElement).src = '/placeholder.jpg' }}

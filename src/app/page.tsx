@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma'
 import { unstable_cache } from 'next/cache'
 import HomeClient from './HomeClient'
 
+export const revalidate = 60
+
 const getFeaturedProducts = unstable_cache(
   async () => prisma.product.findMany({
     where: { featured: true },
