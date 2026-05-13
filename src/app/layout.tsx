@@ -5,6 +5,24 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/cart/CartDrawer'
 import AnnouncementBanner from '@/components/layout/AnnouncementBanner'
+import { prisma } from '@/lib/prisma'
+import { getAuthUser } from '@/lib/auth'
+import { Cormorant_Garamond, Jost } from 'next/font/google'
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+})
+
+const jost = Jost({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-sans',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Laay — Luxury Feminine Fashion',
@@ -17,18 +35,31 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+async function getLayoutData() {
+  const [user, settings] = await Promise.all([
+    getAuthUser().catch(() => null),
+    prisma.settings.findUnique({ where: { id: 1 } }).catch(() => null),
+  ])
+  return {
+    user: user ? { id: user.userId, name: user.name, email: user.email, role: user.role } : null,
+    deliveryFee: settings?.deliveryFee ?? 80,
+    bannerText: settings?.bannerText ?? '',
+    bannerActive: settings?.bannerActive ?? false,
+  }
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const data = await getLayoutData()
+
   return (
-    <html lang="en">
+    <html lang="en" className={`${cormorant.variable} ${jost.variable}`}>
       <head>
         <link rel="icon" href="/logo.png" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
-        <AppProvider>
-          <div id="global-banner"><AnnouncementBanner /></div>
+        <AppProvider initialUser={data.user} initialDeliveryFee={data.deliveryFee}>
+          <div id="global-banner"><AnnouncementBanner text={data.bannerText} active={data.bannerActive} /></div>
           <div id="global-navbar"><Navbar /></div>
           <main id="global-main">{children}</main>
           <div id="global-footer"><Footer /></div>

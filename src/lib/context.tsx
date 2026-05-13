@@ -34,23 +34,23 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | null>(null)
 
-export function AppProvider({ children }: { children: React.ReactNode }) {
+export function AppProvider({
+  children,
+  initialUser = null,
+  initialDeliveryFee = 80,
+}: {
+  children: React.ReactNode
+  initialUser?: User | null
+  initialDeliveryFee?: number
+}) {
   const [cart, setCart] = useState<CartItem[]>([])
   const [cartOpen, setCartOpen] = useState(false)
-  const [user, setUser] = useState<User | null>(null)
-  const [deliveryFee, setDeliveryFee] = useState(80)
+  const [user, setUser] = useState<User | null>(initialUser)
+  const [deliveryFee, setDeliveryFee] = useState(initialDeliveryFee)
 
   useEffect(() => {
     const saved = localStorage.getItem('laay_cart')
     if (saved) setCart(JSON.parse(saved))
-    // Fetch current user
-    fetch('/api/auth/me').then(r => r.ok ? r.json() : null).then(data => {
-      if (data?.user) setUser(data.user)
-    }).catch(() => {})
-    // Fetch delivery fee from settings
-    fetch('/api/settings/public').then(r => r.ok ? r.json() : null).then(data => {
-      if (data?.deliveryFee) setDeliveryFee(data.deliveryFee)
-    }).catch(() => {})
   }, [])
 
   useEffect(() => {

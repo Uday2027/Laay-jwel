@@ -7,15 +7,30 @@ export async function GET(req: Request) {
   const category = searchParams.get('category')
   const featured = searchParams.get('featured')
   const search = searchParams.get('search')
-  const limit = parseInt(searchParams.get('limit') || '100')
+  const limit = Math.min(parseInt(searchParams.get('limit') || '100'), 200)
+  const sort = searchParams.get('sort') || 'newest'
 
   const where: Record<string, unknown> = {}
   if (category) where.category = category
   if (featured === 'true') where.featured = true
   if (search) where.name = { contains: search }
 
-  const products = await prisma.product.findMany({ where, take: limit, orderBy: { createdAt: 'desc' } })
-  return NextResponse.json({ products })
+  const orderBy: Record<string, string> =
+    sort === 'asc' ? { price: 'asc' }
+    : sort === 'desc' ? { price: 'desc' }
+    : sort === 'featured' ? { featured: 'desc' }
+    : { createdAt: 'desc' }
+
+  const products = await prisma.product.findMany({
+    where,
+    take: limit,
+    orderBy,
+    select: { id: true, name: true, slug: true, price: true, images: true, category: true, featured: true, stock: true, createdAt: true },
+  })
+
+  return NextResponse.json({ products }, {
+    headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+  })
 }
 
 export async function POST(req: Request) {

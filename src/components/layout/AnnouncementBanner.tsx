@@ -1,19 +1,11 @@
 'use client'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 
-export default function AnnouncementBanner() {
-  const [text, setText] = useState('')
-  const [active, setActive] = useState(false)
+export default function AnnouncementBanner({ text, active }: { text: string; active: boolean }) {
   const [visible, setVisible] = useState(true)
   const bannerRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
-
-  useEffect(() => {
-    fetch('/api/settings/public').then(r => r.ok ? r.json() : null).then(data => {
-      if (data?.bannerText) { setText(data.bannerText); setActive(data.bannerActive) }
-    }).catch(() => {})
-  }, [])
 
   useEffect(() => {
     const el = document.documentElement
@@ -28,9 +20,9 @@ export default function AnnouncementBanner() {
         el.style.setProperty('--banner-height', `${entry.contentRect.height}px`)
       }
     })
-    
+
     observer.observe(bannerRef.current)
-    
+
     return () => {
       observer.disconnect()
       el.style.setProperty('--banner-height', '0px')

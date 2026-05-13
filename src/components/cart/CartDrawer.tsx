@@ -67,8 +67,8 @@ export default function CartDrawer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               {cart.map(item => (
                 <div key={item.productId} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                  <div style={{ width: 72, height: 88, borderRadius: 'var(--radius-sm)', overflow: 'hidden', flexShrink: 0, background: 'var(--cream-dark)' }}>
-                    <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { (e.target as HTMLImageElement).src = '/placeholder.jpg' }} />
+                  <div style={{ width: 72, height: 88, borderRadius: 'var(--radius-sm)', overflow: 'hidden', flexShrink: 0, background: 'var(--cream-dark)', position: 'relative' }}>
+                    <Image src={item.image} alt={item.name} fill sizes="72px" style={{ objectFit: 'cover' }} onError={e => { (e.currentTarget as HTMLImageElement).src = '/placeholder.jpg' }} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <p style={{ fontFamily: 'var(--font-serif)', fontSize: '0.95rem', marginBottom: '0.25rem', color: 'var(--text-primary)', lineHeight: 1.3 }}>{item.name}</p>

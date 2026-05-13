@@ -10,23 +10,39 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const search = searchParams.get('search') || ''
   const status = searchParams.get('status') || ''
+  const page = Math.max(1, parseInt(searchParams.get('page') || '1'))
+  const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get('pageSize') || '50')))
+  const skip = (page - 1) * pageSize
 
-  const orders = await prisma.order.findMany({
-    where: {
-      ...(search ? {
-        OR: [
-          { orderNumber: { contains: search } },
-          { phone: { contains: search } },
-          { transactionId: { contains: search } },
-          { name: { contains: search } },
-        ]
-      } : {}),
-      ...(status ? { status } : {}),
-    },
-    include: { items: { include: { product: true } }, user: { select: { name: true, email: true } } },
-    orderBy: { createdAt: 'desc' },
-  })
-  return NextResponse.json({ orders })
+  const where = {
+    ...(search ? {
+      OR: [
+        { orderNumber: { contains: search } },
+        { phone: { contains: search } },
+        { transactionId: { contains: search } },
+        { name: { contains: search } },
+      ]
+    } : {}),
+    ...(status ? { status } : {}),
+  }
+
+  const [orders, total] = await Promise.all([
+    prisma.order.findMany({
+      where,
+      include: {
+        items: {
+          select: { id: true, quantity: true, price: true, productId: true, product: { select: { id: true, name: true, slug: true, images: true } } }
+        },
+        user: { select: { name: true, email: true } }
+      },
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: pageSize,
+    }),
+    prisma.order.count({ where }),
+  ])
+
+  return NextResponse.json({ orders, total, page, pageSize })
 }
 
 export async function POST(req: Request) {

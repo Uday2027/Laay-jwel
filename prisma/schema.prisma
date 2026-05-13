@@ -35,6 +35,10 @@ model Product {
   orderItems  OrderItem[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+
+  @@index([category])
+  @@index([featured])
+  @@index([createdAt])
 }
 
 model Order {
@@ -60,6 +64,10 @@ model Order {
   discountBreakdown String  @default("{}") // JSON breakdown of applied discounts
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([userId])
 }
 
 model OrderItem {
@@ -70,6 +78,9 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   price     Float
+
+  @@index([productId])
+  @@index([orderId])
 }
 
 model Coupon {

@@ -1,5 +1,7 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
+import { cloudinaryUrl } from '@/lib/images'
 
 interface Product {
   id: number; name: string; slug: string; price: number; images: string; category: string;
@@ -19,14 +21,17 @@ export default function ProductCard({ product, onAddToCart }: Props) {
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-md)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)' }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-sm)'; (e.currentTarget as HTMLDivElement).style.transform = '' }}
     >
-      {/* Image */}
       <Link href={`/shop/${product.slug}`} style={{ display: 'block', overflow: 'hidden', aspectRatio: '3/4', position: 'relative', background: 'var(--cream-dark)' }}>
-        <img src={image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
+        <Image
+          src={cloudinaryUrl(image, { width: 400 })}
+          alt={product.name}
+          fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          style={{ objectFit: 'cover', transition: 'transform 0.5s ease' }}
           onMouseEnter={e => { (e.target as HTMLImageElement).style.transform = 'scale(1.06)' }}
           onMouseLeave={e => { (e.target as HTMLImageElement).style.transform = '' }}
           onError={e => { (e.target as HTMLImageElement).src = '/placeholder.jpg' }}
         />
-        {/* Category badge */}
         <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem' }}>
           <span className="badge badge-gold" style={{ background: 'rgba(245,239,232,0.9)', backdropFilter: 'blur(4px)', fontSize: '0.58rem' }}>
             {product.category}
@@ -34,7 +39,6 @@ export default function ProductCard({ product, onAddToCart }: Props) {
         </div>
       </Link>
 
-      {/* Info */}
       <div style={{ padding: 'clamp(0.6rem, 2vw, 1rem) clamp(0.7rem, 2vw, 1.1rem) clamp(0.75rem, 2vw, 1.25rem)' }}>
         <Link href={`/shop/${product.slug}`}>
           <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: 'clamp(0.82rem, 2vw, 1rem)', marginBottom: '0.25rem', color: 'var(--charcoal)', lineHeight: 1.3 }}>

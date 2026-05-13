@@ -35,16 +35,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No files provided' }, { status: 400 })
     }
 
-    const urls: string[] = []
+    const uploads = await Promise.all(
+      files.map(async (file) => {
+        const bytes = await file.arrayBuffer()
+        const buffer = Buffer.from(bytes)
+        const result = await uploadToCloudinary(buffer, file.name)
+        return result.secure_url
+      })
+    )
 
-    for (const file of files) {
-      const bytes = await file.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-      const result = await uploadToCloudinary(buffer, file.name)
-      urls.push(result.secure_url)
-    }
-
-    return NextResponse.json({ urls })
+    return NextResponse.json({ urls: uploads })
   } catch (err) {
     console.error('Cloudinary upload error:', err)
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
