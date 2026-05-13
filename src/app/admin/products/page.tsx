@@ -57,15 +57,39 @@ export default function AdminProducts() {
     loadProducts()
   }
 
+  async function resizeImage(file: File, maxWidth = 1200, quality = 0.85): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width)
+        const canvas = document.createElement('canvas')
+        canvas.width = img.width * scale
+        canvas.height = img.height * scale
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return reject(new Error('Canvas not supported'))
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        canvas.toBlob(blob => {
+          if (blob) resolve(blob)
+          else reject(new Error('Compression failed'))
+        }, 'image/jpeg', quality)
+      }
+      img.onerror = reject
+      img.src = URL.createObjectURL(file)
+    })
+  }
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
     setUploading(true)
-    const formData = new FormData()
-    for (const file of files) {
-      formData.append('files', file)
-    }
     try {
+      const resized = await Promise.all(
+        Array.from(files).map(file => resizeImage(file))
+      )
+      const formData = new FormData()
+      resized.forEach((blob, i) => {
+        formData.append('files', blob, files[i].name.replace(/\.[^/.]+$/, '') + '.jpg')
+      })
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const data = await res.json()
       if (res.ok && data.urls) {

@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server'
 import { cloudinary } from '@/lib/cloudinary'
 import { getAuthUserFromRequest, isAdmin } from '@/lib/auth'
+import sharp from 'sharp'
+
+async function compressImage(buffer: Buffer): Promise<Buffer> {
+  return sharp(buffer)
+    .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+    .jpeg({ quality: 80, progressive: true, mozjpeg: true })
+    .toBuffer()
+}
 
 function uploadToCloudinary(buffer: Buffer, filename: string): Promise<{ secure_url: string; public_id: string }> {
   return new Promise((resolve, reject) => {
@@ -39,7 +47,8 @@ export async function POST(req: Request) {
       files.map(async (file) => {
         const bytes = await file.arrayBuffer()
         const buffer = Buffer.from(bytes)
-        const result = await uploadToCloudinary(buffer, file.name)
+        const compressed = await compressImage(buffer)
+        const result = await uploadToCloudinary(compressed, file.name)
         return result.secure_url
       })
     )
