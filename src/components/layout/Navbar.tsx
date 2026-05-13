@@ -4,17 +4,21 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useApp } from '@/lib/context'
 import styles from './Navbar.module.css'
+import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
   const { cartCount, setCartOpen, user } = useApp()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  if (pathname.startsWith('/admin')) return null
 
   const JEWELRY_LINKS = [
     { href: '/shop?category=BRACELETS', label: 'Bracelets' },

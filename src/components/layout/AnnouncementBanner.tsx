@@ -1,11 +1,13 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 
 export default function AnnouncementBanner() {
   const [text, setText] = useState('')
   const [active, setActive] = useState(false)
   const [visible, setVisible] = useState(true)
   const bannerRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
 
   useEffect(() => {
     fetch('/api/settings/public').then(r => r.ok ? r.json() : null).then(data => {
@@ -15,7 +17,7 @@ export default function AnnouncementBanner() {
 
   useEffect(() => {
     const el = document.documentElement
-    if (!active || !text || !visible) {
+    if (!active || !text || !visible || pathname.startsWith('/admin')) {
       el.style.setProperty('--banner-height', '0px')
       return
     }
@@ -33,9 +35,9 @@ export default function AnnouncementBanner() {
       observer.disconnect()
       el.style.setProperty('--banner-height', '0px')
     }
-  }, [active, text, visible])
+  }, [active, text, visible, pathname])
 
-  if (!active || !text || !visible) return null
+  if (!active || !text || !visible || pathname.startsWith('/admin')) return null
 
   return (
     <div

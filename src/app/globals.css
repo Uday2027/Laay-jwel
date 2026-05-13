@@ -376,3 +376,6 @@ tbody tr:last-child td { border-bottom: none; }
   /* Checkout: stack order summary below form on mobile */
   .checkout-grid { grid-template-columns: 1fr !important; }
 }
+
+/* Hide store footer in admin panel */
+body.admin-mode #global-footer { display: none !important; }

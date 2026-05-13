@@ -25,6 +25,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }).catch(() => router.replace('/account'))
   }, [router])
 
+  // Hide public navbar/footer when in admin panel
+  useEffect(() => {
+    document.body.classList.add('admin-mode')
+    return () => document.body.classList.remove('admin-mode')
+  }, [])
+
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
     router.push('/account')

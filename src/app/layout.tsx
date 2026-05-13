@@ -28,10 +28,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <AppProvider>
-          <AnnouncementBanner />
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
+          <div id="global-banner"><AnnouncementBanner /></div>
+          <div id="global-navbar"><Navbar /></div>
+          <main id="global-main">{children}</main>
+          <div id="global-footer"><Footer /></div>
           <CartDrawer />
         </AppProvider>
       </body>
