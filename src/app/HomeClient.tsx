@@ -92,7 +92,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
         marginTop: 'var(--header-offset)',
         background: '#FAF7F2',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        padding: '2rem 1rem',
+        padding: '0.75rem 1rem 2rem',
       }}>
         {/* Desktop layout */}
         <div className="hidden-mobile" style={{ width: '100%', maxWidth: '1100px' }}>
