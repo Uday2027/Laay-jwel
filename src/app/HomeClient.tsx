@@ -33,8 +33,6 @@ function shuffle<T>(arr: T[]): T[] {
 export default function HomeClient({ products }: { products: Product[] }) {
   const [shuffled, setShuffled] = React.useState<Product[]>(products)
   const heroRef = useRef<HTMLDivElement>(null)
-  const titleRef = useRef<HTMLHeadingElement>(null)
-  const subtitleRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
   const { addToCart } = useApp()
 
@@ -64,10 +62,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-      tl.from(titleRef.current, { y: 70, opacity: 0, duration: 1.3 })
-        .from(subtitleRef.current, { y: 30, opacity: 0, duration: 0.9 }, '-=0.7')
-        .from(ctaRef.current, { y: 20, opacity: 0, duration: 0.7 }, '-=0.5')
-        .from('.hero-ornament', { scaleX: 0, opacity: 0, duration: 1.2, ease: 'power2.inOut' }, '-=0.8')
+      tl.from(ctaRef.current, { y: 30, opacity: 0, duration: 0.9 }, 0.4)
 
       gsap.utils.toArray<HTMLElement>('.product-card-wrap').forEach((el, i) => {
         gsap.from(el, { y: 50, opacity: 0, duration: 0.8, delay: (i % 3) * 0.12, ease: 'power2.out',
@@ -95,50 +90,43 @@ export default function HomeClient({ products }: { products: Product[] }) {
   return (
     <>
       <section ref={heroRef} style={{
-        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: `linear-gradient(155deg, #FDFAF7 0%, var(--cream-dark) 55%, var(--blush) 100%)`,
+        minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end',
         paddingTop: 'var(--header-offset)', position: 'relative', overflow: 'hidden', textAlign: 'center',
       }}>
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.12 }} viewBox="0 0 1400 900" fill="none">
-          <circle cx="150" cy="200" r="320" stroke="#C9A96E" strokeWidth="0.6"/>
-          <circle cx="1250" cy="700" r="280" stroke="#C9A96E" strokeWidth="0.6"/>
-          <circle cx="700" cy="450" r="500" stroke="#C9A96E" strokeWidth="0.3"/>
-          <circle cx="700" cy="450" r="350" stroke="#C9A96E" strokeWidth="0.2"/>
-        </svg>
+        {/* Hero background image */}
+        <Image
+          src="/cover_new.jpg"
+          alt="Laay New Arrival"
+          fill
+          priority
+          sizes="100vw"
+          style={{ position: 'absolute', inset: 0, objectFit: 'cover', objectPosition: 'center top' }}
+        />
 
-        <div className="hidden-mobile" style={{ position: 'absolute', right: '6%', top: '18%', width: '200px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 20px 60px rgba(44,40,38,0.18)', opacity: 0.9, transform: 'rotate(2deg)' }}>
-          <Image src="/products/bracelet-hero.jpg" alt="" width={400} height={500} style={{ width: '100%', height: 'auto', display: 'block' }} priority sizes="200px" />
-        </div>
-        <div className="hidden-mobile" style={{ position: 'absolute', left: '5%', bottom: '18%', width: '155px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 20px 60px rgba(44,40,38,0.18)', opacity: 0.85, transform: 'rotate(-2.5deg)' }}>
-          <Image src="/products/ring-hero.jpg" alt="" width={310} height={388} style={{ width: '100%', height: 'auto', display: 'block' }} priority sizes="155px" />
-        </div>
+        {/* Bottom gradient for CTA readability */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(44,40,38,0.65) 0%, rgba(44,40,38,0.2) 35%, transparent 60%)', zIndex: 1 }} />
 
-        <div style={{ maxWidth: '680px', padding: '0 2rem', position: 'relative', zIndex: 1 }}>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '2.5rem' }}>
+        {/* Category pills - top */}
+        <div style={{ position: 'absolute', top: 'calc(var(--header-offset) + 1.5rem)', left: 0, right: 0, zIndex: 2 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', padding: '0 1rem' }}>
             {['Bracelets', 'Earrings', 'Rings'].map(c => (
-              <span key={c} style={{ fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold)', padding: '0.3rem 0.9rem', border: '1px solid rgba(201,169,110,0.4)', borderRadius: '100px' }}>{c}</span>
+              <span key={c} style={{ fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--white)', padding: '0.35rem 1rem', border: '1px solid rgba(255,255,255,0.35)', borderRadius: '100px', background: 'rgba(0,0,0,0.2)', backdropFilter: 'blur(4px)' }}>{c}</span>
             ))}
           </div>
+        </div>
 
-          <div className="hero-ornament" style={{ height: '1px', width: '80px', background: 'var(--gold)', margin: '0 auto 2.5rem', transformOrigin: 'left' }} />
-
-          <h1 ref={titleRef} style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, lineHeight: 1.05, marginBottom: '1.75rem', color: 'var(--charcoal)' }}>
-            Fine Jewelry<br /><em style={{ fontStyle: 'italic', color: 'var(--gold-dark)' }}>Crafted for Her</em>
-          </h1>
-
-          <p ref={subtitleRef} style={{ fontSize: '1rem', lineHeight: 1.85, color: 'var(--text-secondary)', maxWidth: '400px', margin: '0 auto 3rem' }}>
-            Bracelets, earrings and rings of extraordinary beauty — curated for the woman who knows her worth.
-          </p>
-
+        {/* Bottom CTA */}
+        <div style={{ position: 'relative', zIndex: 2, padding: '0 2rem 5.5rem', maxWidth: '680px' }}>
           <div ref={ctaRef} className="hero-cta-row" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link href="/shop" className="btn btn-primary btn-lg">Explore Collection</Link>
             <Link href="/shop?category=RINGS" className="btn btn-outline-gold btn-lg">Shop Rings</Link>
           </div>
         </div>
 
-        <div style={{ position: 'absolute', bottom: '2.5rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', opacity: 0.4 }}>
-          <span style={{ fontSize: '0.58rem', letterSpacing: '0.25em', textTransform: 'uppercase' }}>Discover</span>
-          <div style={{ width: '1px', height: '44px', background: 'var(--charcoal)', animation: 'scrollPulse 1.8s ease-in-out infinite' }} />
+        {/* Scroll indicator */}
+        <div style={{ position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', opacity: 0.55, zIndex: 2 }}>
+          <span style={{ fontSize: '0.58rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--white)' }}>Discover</span>
+          <div style={{ width: '1px', height: '44px', background: 'var(--white)', animation: 'scrollPulse 1.8s ease-in-out infinite' }} />
         </div>
       </section>
 
