@@ -92,7 +92,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
         paddingTop: 'var(--header-offset)',
       }}>
         <Image
-          src="/cover_withoutlogo.jpg"
+          src="/newbgcover.jpg"
           alt="Laay New Arrival"
           fill
           priority
@@ -101,7 +101,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
           style={{ position: 'absolute', inset: 0, objectFit: 'cover', objectPosition: 'center top' }}
         />
         <Image
-          src="/mobile_cover_ing.png"
+          src="/movileCoverSmall.png"
           alt="Laay New Arrival"
           fill
           priority
