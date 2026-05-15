@@ -88,29 +88,33 @@ export default function HomeClient({ products }: { products: Product[] }) {
   return (
     <>
       <section ref={heroRef} style={{
-        minHeight: '100vh', position: 'relative', overflow: 'hidden',
+        minHeight: 'calc(100vh - var(--header-offset))',
+        marginTop: 'var(--header-offset)',
+        position: 'relative', overflow: 'hidden',
       }}>
         <Image
           src="/newbgcover.jpg"
           alt="Laay New Arrival"
           fill
           priority
+          quality={90}
           sizes="100vw"
           className="hidden-mobile"
-          style={{ position: 'absolute', top: 'var(--header-offset)', left: 0, right: 0, bottom: 0, objectFit: 'cover', objectPosition: 'center top' }}
+          style={{ objectFit: 'cover', objectPosition: 'center top' }}
         />
         <Image
           src="/movileCoverSmall (1).png"
           alt="Laay New Arrival"
           fill
           priority
+          quality={90}
           sizes="100vw"
           className="hidden-desktop"
-          style={{ position: 'absolute', top: 'var(--header-offset)', left: 0, right: 0, bottom: 0, objectFit: 'cover', objectPosition: 'center top' }}
+          style={{ objectFit: 'cover', objectPosition: 'center top' }}
         />
       </section>
 
-      <section className="section" style={{ background: 'var(--white)' }}>
+      <section className="section" style={{ background: 'var(--white)', paddingTop: '3rem', paddingBottom: '3rem' }}>
         <div className="container">
           <div className="text-center" style={{ marginBottom: '2.5rem' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
@@ -138,7 +142,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
         </div>
       </section>
 
-      <section style={{ background: 'var(--charcoal)', padding: '4rem 0', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ background: 'var(--charcoal)', padding: '2.5rem 0', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(201,169,110,0.06) 0%, transparent 60%), radial-gradient(circle at 80% 50%, rgba(201,169,110,0.06) 0%, transparent 60%)' }} />
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
@@ -181,7 +185,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
         </div>
       </section>
 
-      <section style={{ background: 'var(--cream-dark)', padding: '7rem 0', position: 'relative' }}>
+      <section style={{ background: 'var(--cream-dark)', padding: '4rem 0', position: 'relative' }}>
         <div style={{ position: 'absolute', top: '3rem', left: '50%', transform: 'translateX(-50%)', height: '1px', width: '80px', background: 'var(--gold)' }} />
         <div className="container-sm text-center about-text">
           <span style={{ fontSize: '0.65rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--gold)' }}>Our Promise</span>
