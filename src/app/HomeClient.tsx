@@ -94,39 +94,81 @@ export default function HomeClient({ products }: { products: Product[] }) {
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         padding: '2rem 1rem',
       }}>
-        {/* Header text */}
-        <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
-          <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, lineHeight: 1.05, color: '#7A6A5A', marginBottom: '0.75rem' }}>
-            <span style={{ display: 'block', fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontStyle: 'italic' }}>New</span>
-            <span style={{ display: 'block', fontSize: 'clamp(2.4rem, 7vw, 4rem)', fontStyle: 'italic' }}>Arrival</span>
-          </h1>
-          <p style={{ fontSize: 'clamp(0.72rem, 1.8vw, 0.85rem)', color: '#7A6A5A', letterSpacing: '0.1em', lineHeight: 1.7 }}>
+        {/* Desktop layout */}
+        <div className="hidden-mobile" style={{ width: '100%', maxWidth: '1100px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
+            {/* Left — Earrings */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1rem', color: '#7A6A5A', marginBottom: '0.5rem' }}>Earring</span>
+              <div style={{ position: 'relative', aspectRatio: '1/1.2', width: '100%', overflow: 'hidden', borderRadius: '2px' }}>
+                <Image src="/Hero/earrings.png" alt="Earrings" fill priority sizes="33vw" style={{ objectFit: 'cover' }} />
+              </div>
+            </div>
+
+            {/* Center — New Arrival + Bracelet */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, lineHeight: 1.05, color: '#7A6A5A', textAlign: 'center' }}>
+                <span style={{ display: 'block', fontSize: '2.2rem', fontStyle: 'italic' }}>New</span>
+                <span style={{ display: 'block', fontSize: '2.8rem', fontStyle: 'italic' }}>Arrival</span>
+              </h1>
+              <div style={{ marginTop: '1.5rem', position: 'relative', aspectRatio: '1.35/1', width: '100%', overflow: 'hidden', borderRadius: '2px' }}>
+                <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="40vw" style={{ objectFit: 'cover', objectPosition: 'center 25%' }} />
+              </div>
+              <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1rem', color: '#7A6A5A', marginTop: '0.5rem' }}>Bracelet</span>
+            </div>
+
+            {/* Right — Rings */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1rem', color: '#7A6A5A', marginBottom: '0.5rem' }}>Ring</span>
+              <div style={{ position: 'relative', aspectRatio: '1/1.2', width: '100%', overflow: 'hidden', borderRadius: '2px' }}>
+                <Image src="/Hero/rings.png" alt="Rings" fill priority sizes="33vw" style={{ objectFit: 'cover' }} />
+              </div>
+            </div>
+          </div>
+
+          {/* Tagline */}
+          <p style={{ marginTop: '2.5rem', fontSize: '0.85rem', color: '#7A6A5A', letterSpacing: '0.1em', lineHeight: 1.7, textAlign: 'center' }}>
             Behind every compliment is a LAAY piece<br />
             Jewelry that starts conversations
           </p>
         </div>
 
-        {/* Category labels */}
-        <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', maxWidth: '480px', marginBottom: '0.5rem' }}>
-          <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(0.85rem, 2.2vw, 1.05rem)', color: '#7A6A5A' }}>Earring</span>
-          <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(0.85rem, 2.2vw, 1.05rem)', color: '#7A6A5A' }}>Ring</span>
-        </div>
+        {/* Mobile layout */}
+        <div className="hidden-desktop" style={{ width: '100%', maxWidth: '520px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {/* Header text */}
+          <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+            <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, lineHeight: 1.05, color: '#7A6A5A', marginBottom: '0.75rem' }}>
+              <span style={{ display: 'block', fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontStyle: 'italic' }}>New</span>
+              <span style={{ display: 'block', fontSize: 'clamp(2.4rem, 7vw, 4rem)', fontStyle: 'italic' }}>Arrival</span>
+            </h1>
+            <p style={{ fontSize: 'clamp(0.72rem, 1.8vw, 0.85rem)', color: '#7A6A5A', letterSpacing: '0.1em', lineHeight: 1.7 }}>
+              Behind every compliment is a LAAY piece<br />
+              Jewelry that starts conversations
+            </p>
+          </div>
 
-        {/* Image grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', width: '100%', maxWidth: '520px' }}>
-          <div style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px' }}>
-            <Image src="/Hero/earrings.png" alt="Earrings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover' }} />
+          {/* Category labels */}
+          <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginBottom: '0.5rem' }}>
+            <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(0.85rem, 2.2vw, 1.05rem)', color: '#7A6A5A' }}>Earring</span>
+            <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(0.85rem, 2.2vw, 1.05rem)', color: '#7A6A5A' }}>Ring</span>
           </div>
-          <div style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px' }}>
-            <Image src="/Hero/rings.png" alt="Rings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover' }} />
-          </div>
-          <div style={{ position: 'relative', aspectRatio: '2/1.1', overflow: 'hidden', borderRadius: '2px', gridColumn: '1 / -1' }}>
-            <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="(max-width: 520px) 100vw, 520px" style={{ objectFit: 'cover', objectPosition: 'center 25%' }} />
-          </div>
-        </div>
 
-        {/* Bracelet label */}
-        <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(0.85rem, 2.2vw, 1.05rem)', color: '#7A6A5A', marginTop: '0.5rem' }}>Bracelet</span>
+          {/* Image grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', width: '100%' }}>
+            <div style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px' }}>
+              <Image src="/Hero/earrings.png" alt="Earrings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover' }} />
+            </div>
+            <div style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px' }}>
+              <Image src="/Hero/rings.png" alt="Rings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover' }} />
+            </div>
+            <div style={{ position: 'relative', aspectRatio: '2/1.1', overflow: 'hidden', borderRadius: '2px', gridColumn: '1 / -1' }}>
+              <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="(max-width: 520px) 100vw, 520px" style={{ objectFit: 'cover', objectPosition: 'center 25%' }} />
+            </div>
+          </div>
+
+          {/* Bracelet label */}
+          <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(0.85rem, 2.2vw, 1.05rem)', color: '#7A6A5A', marginTop: '0.5rem' }}>Bracelet</span>
+        </div>
       </section>
 
       <section className="section" style={{ background: 'var(--white)', paddingTop: '3rem', paddingBottom: '3rem' }}>
