@@ -26,6 +26,7 @@
   --radius-xl: 24px;
   --font-serif: 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'Jost', system-ui, sans-serif;
+  --font-signature: 'Great Vibes', cursive;
   --nav-height: 72px;
   --banner-height: 0px;
   --header-offset: calc(var(--nav-height) + var(--banner-height));

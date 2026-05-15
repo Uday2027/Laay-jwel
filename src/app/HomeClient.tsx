@@ -108,8 +108,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
             {/* Center — New Arrival + Bracelet */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, lineHeight: 1.05, color: '#7A6A5A', textAlign: 'center' }}>
-                <span style={{ display: 'block', fontSize: '2.2rem', fontStyle: 'italic' }}>New</span>
-                <span style={{ display: 'block', fontSize: '2.8rem', fontStyle: 'italic' }}>Arrival</span>
+                <span style={{ display: 'block', fontFamily: 'var(--font-signature)', fontSize: '3.2rem', lineHeight: 1.1 }}>We Are Here</span>
               </h1>
               <Link href="/shop?category=BRACELETS" style={{ marginTop: '1.5rem', position: 'relative', aspectRatio: '1.35/1', width: '100%', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
                 <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="40vw" style={{ objectFit: 'cover', objectPosition: 'center 25%', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
@@ -139,8 +138,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
             {/* Header text */}
             <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
             <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, lineHeight: 1.05, color: '#7A6A5A', marginBottom: '0.75rem' }}>
-              <span style={{ display: 'block', fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontStyle: 'italic' }}>New</span>
-              <span style={{ display: 'block', fontSize: 'clamp(2.4rem, 7vw, 4rem)', fontStyle: 'italic' }}>Arrival</span>
+              <span style={{ display: 'block', fontFamily: 'var(--font-signature)', fontSize: 'clamp(2.4rem, 7vw, 3.8rem)', lineHeight: 1.1 }}>We Are Here</span>
             </h1>
             <p style={{ fontSize: 'clamp(0.72rem, 1.8vw, 0.85rem)', color: '#7A6A5A', letterSpacing: '0.1em', lineHeight: 1.7 }}>
               Behind every compliment is a LAAY piece<br />

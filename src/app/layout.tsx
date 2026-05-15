@@ -9,7 +9,7 @@ import AnnouncementBanner from '@/components/layout/AnnouncementBanner'
 import NavigationLoader from '@/components/layout/NavigationLoader'
 import { prisma } from '@/lib/prisma'
 import { getAuthUser } from '@/lib/auth'
-import { Cormorant_Garamond, Jost } from 'next/font/google'
+import { Cormorant_Garamond, Jost, Great_Vibes } from 'next/font/google'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -23,6 +23,13 @@ const jost = Jost({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600'],
   variable: '--font-sans',
+  display: 'swap',
+})
+
+const greatVibes = Great_Vibes({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-signature',
   display: 'swap',
 })
 
@@ -63,7 +70,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const data = await getLayoutData()
 
   return (
-    <html lang="en" className={`${cormorant.variable} ${jost.variable}`}>
+    <html lang="en" className={`${cormorant.variable} ${jost.variable} ${greatVibes.variable}`}>
       <head>
         <link rel="icon" href="/logo.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
