@@ -26,21 +26,24 @@ export default function Footer() {
           from { opacity: 0; transform: translateY(20px) scale(0.8); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .float-icon { animation: floatIn 0.5s ease backwards; }
+        .float-icon { animation: floatIn 0.5s ease backwards; transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .float-icon:nth-child(1) { animation-delay: 0.1s; }
         .float-icon:nth-child(2) { animation-delay: 0.2s; }
         .float-icon:nth-child(3) { animation-delay: 0.3s; }
+        .float-wa:hover { transform: scale(1.12) !important; box-shadow: 0 6px 20px rgba(37,211,102,0.5) !important; }
+        .float-ig:hover { transform: scale(1.12) !important; box-shadow: 0 6px 20px rgba(220,39,67,0.5) !important; }
+        .float-fb:hover { transform: scale(1.12) !important; box-shadow: 0 6px 20px rgba(24,119,242,0.5) !important; }
       `}</style>
 
       {/* Floating social icons */}
       <div style={{ position: 'fixed', bottom: '1.5rem', right: '1.5rem', zIndex: 50, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        <a href="https://wa.me/qr/JCYRNGVQFATAP1" target="_blank" rel="noopener noreferrer" className="float-icon" title="WhatsApp" style={{ width: 48, height: 48, borderRadius: '50%', background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 4px 14px rgba(37,211,102,0.35)', transition: 'transform 0.3s ease, box-shadow 0.3s ease' }} onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.12)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(37,211,102,0.5)' }} onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(37,211,102,0.35)' }}>
+        <a href="https://wa.me/qr/JCYRNGVQFATAP1" target="_blank" rel="noopener noreferrer" className="float-icon float-wa" title="WhatsApp" style={{ width: 48, height: 48, borderRadius: '50%', background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 4px 14px rgba(37,211,102,0.35)' }}>
           {WA_SVG}
         </a>
-        <a href="https://www.instagram.com/____laay____/" target="_blank" rel="noopener noreferrer" className="float-icon" title="Instagram" style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 4px 14px rgba(220,39,67,0.35)', transition: 'transform 0.3s ease, box-shadow 0.3s ease' }} onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.12)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(220,39,67,0.5)' }} onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(220,39,67,0.35)' }}>
+        <a href="https://www.instagram.com/____laay____/" target="_blank" rel="noopener noreferrer" className="float-icon float-ig" title="Instagram" style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 4px 14px rgba(220,39,67,0.35)' }}>
           {IG_SVG}
         </a>
-        <a href="https://www.facebook.com/profile.php?id=61574705164180" target="_blank" rel="noopener noreferrer" className="float-icon" title="Facebook" style={{ width: 48, height: 48, borderRadius: '50%', background: '#1877F2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 4px 14px rgba(24,119,242,0.35)', transition: 'transform 0.3s ease, box-shadow 0.3s ease' }} onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.12)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(24,119,242,0.5)' }} onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(24,119,242,0.35)' }}>
+        <a href="https://www.facebook.com/profile.php?id=61574705164180" target="_blank" rel="noopener noreferrer" className="float-icon float-fb" title="Facebook" style={{ width: 48, height: 48, borderRadius: '50%', background: '#1877F2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 4px 14px rgba(24,119,242,0.35)' }}>
           {FB_SVG}
         </a>
       </div>
