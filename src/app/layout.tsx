@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { Suspense } from 'react'
 import { AppProvider } from '@/lib/context'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/cart/CartDrawer'
 import AnnouncementBanner from '@/components/layout/AnnouncementBanner'
+import NavigationLoader from '@/components/layout/NavigationLoader'
 import { prisma } from '@/lib/prisma'
 import { getAuthUser } from '@/lib/auth'
 import { Cormorant_Garamond, Jost } from 'next/font/google'
@@ -58,6 +60,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
+        <Suspense fallback={null}>
+          <NavigationLoader />
+        </Suspense>
         <AppProvider initialUser={data.user} initialDeliveryFee={data.deliveryFee}>
           <div id="global-banner"><AnnouncementBanner text={data.bannerText} active={data.bannerActive} /></div>
           <div id="global-navbar"><Navbar /></div>

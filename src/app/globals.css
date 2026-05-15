@@ -260,6 +260,12 @@ textarea.input { resize: vertical; min-height: 100px; }
   .section-title { font-size: 1.4rem; }
 }
 
+/* Navigation loader animation */
+@keyframes navLoader {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 /* Admin sidebar layout */
 .admin-layout { display: flex; min-height: 100vh; }
 .admin-sidebar {

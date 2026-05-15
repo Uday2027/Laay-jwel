@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 
 interface Product { id: number; name: string; slug: string; price: number; category: string; stock: number; featured: boolean; images: string; description: string }
 const CATEGORIES = ['BRACELETS', 'EARRINGS', 'RINGS']
@@ -14,6 +14,7 @@ export default function AdminProducts() {
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const searchParams = useSearchParams()
+  const router = useRouter()
 
   const loadProducts = useCallback(() => {
     fetch('/api/products').then(r => r.json()).then(d => setProducts(d.products || []))
@@ -38,11 +39,11 @@ export default function AdminProducts() {
 
   const save = async () => {
     setSaving(true)
-    const body = { ...form, price: parseFloat(form.price), stock: parseInt(form.stock), images: form.images }
+    const body = { ...form, price: parseInt(form.price), stock: parseInt(form.stock), images: form.images }
     const url = editing ? `/api/products/${editing.id}` : '/api/products'
     const method = editing ? 'PUT' : 'POST'
     const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-    if (res.ok) { loadProducts(); setShowForm(false); setEditing(null) }
+    if (res.ok) { loadProducts(); setShowForm(false); setEditing(null); router.refresh() }
     setSaving(false)
   }
 
@@ -50,11 +51,13 @@ export default function AdminProducts() {
     if (!confirm('Delete this product?')) return
     await fetch(`/api/products/${id}`, { method: 'DELETE' })
     loadProducts()
+    router.refresh()
   }
 
   const toggleFeatured = async (p: Product) => {
     await fetch(`/api/products/${p.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ featured: !p.featured }) })
     loadProducts()
+    router.refresh()
   }
 
   async function resizeImage(file: File, maxWidth = 1200, quality = 0.85): Promise<Blob | null> {

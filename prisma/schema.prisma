@@ -27,7 +27,7 @@ model Product {
   name        String
   slug        String      @unique
   description String
-  price       Float
+  price       Int
   category    String      // BRACELETS | EARRINGS | RINGS
   images      String      @default("[]") // JSON array of image paths
   stock       Int         @default(0)

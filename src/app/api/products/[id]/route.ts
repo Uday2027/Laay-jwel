@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getAuthUserFromRequest, isAdmin } from '@/lib/auth'
+import { revalidatePath } from 'next/cache'
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -19,6 +20,11 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   const data = await req.json()
   if (data.images) data.images = JSON.stringify(data.images)
   const product = await prisma.product.update({ where: { id: parseInt(id) }, data })
+
+  revalidatePath('/')
+  revalidatePath('/shop')
+  revalidatePath('/shop/[slug]')
+
   return NextResponse.json({ product })
 }
 
@@ -27,5 +33,10 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   if (!isAdmin(user)) return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
   const { id } = await params
   await prisma.product.delete({ where: { id: parseInt(id) } })
+
+  revalidatePath('/')
+  revalidatePath('/shop')
+  revalidatePath('/shop/[slug]')
+
   return NextResponse.json({ message: 'Deleted' })
 }

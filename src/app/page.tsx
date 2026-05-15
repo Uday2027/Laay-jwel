@@ -17,5 +17,6 @@ const getFeaturedProducts = unstable_cache(
 
 export default async function HomePage() {
   const products = await getFeaturedProducts()
-  return <HomeClient products={products} />
+  const shuffled = [...products].sort(() => Math.random() - 0.5)
+  return <HomeClient products={shuffled} />
 }

@@ -122,7 +122,7 @@ export default function ProductDetailClient({
             <div style={{ background: 'var(--cream)', borderRadius: 'var(--radius-md)', padding: '1rem 1.25rem', marginBottom: '2rem', border: '1px solid var(--border-light)' }}>
               <p style={{ fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.5rem', color: 'var(--gold)' }}>💰 Save More</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                {['Log in for 5% member discount', 'Add 2 more items for bulk 5% off', 'Pay delivery in advance for 5% off'].map(tip => (
+                {['Add 2 more items for bulk 5% off'].map(tip => (
                   <p key={tip} style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>• {tip}</p>
                 ))}
               </div>
@@ -134,9 +134,6 @@ export default function ProductDetailClient({
           </div>
         </div>
       </div>
-
-      {/* Reviews */}
-      <ReviewsSection productId={product.id} initialReviews={initialReviews} />
 
       {/* Related Products */}
       {related.length > 0 && (
@@ -177,6 +174,9 @@ export default function ProductDetailClient({
           </div>
         </div>
       )}
+
+      {/* Reviews */}
+      <ReviewsSection productId={product.id} initialReviews={initialReviews} />
     </div>
   )
 }

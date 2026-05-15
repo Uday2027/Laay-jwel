@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getAuthUserFromRequest, isAdmin } from '@/lib/auth'
+import { revalidatePath } from 'next/cache'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -42,5 +43,9 @@ export async function POST(req: Request) {
   const product = await prisma.product.create({
     data: { ...data, slug, images: JSON.stringify(data.images || []) }
   })
+
+  revalidatePath('/')
+  revalidatePath('/shop')
+
   return NextResponse.json({ product }, { status: 201 })
 }
