@@ -240,7 +240,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
       <section style={{ background: 'var(--cream-dark)', padding: '4rem 0', position: 'relative' }}>
         <div style={{ position: 'absolute', top: '3rem', left: '50%', transform: 'translateX(-50%)', height: '1px', width: '80px', background: 'var(--gold)' }} />
         <div className="container-sm text-center about-text">
-          <span style={{ fontSize: '0.65rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--gold)' }}>Our Promise</span>
+          <span style={{ fontSize: '0.65rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--gold)' }}></span>
           <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, marginTop: '0.75rem', marginBottom: '1.75rem', lineHeight: 1.2 }}>
             Every Piece Tells<br />a Love Story
           </h2>
@@ -248,7 +248,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
             At Laay, we believe that the right piece of jewelry holds the power to transform how you feel — and how the world sees you. Each item is curated for quality, crafted for longevity, and designed to become part of your story.
           </p>
           <div style={{ display: 'flex', gap: '3rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            {[['12+', 'Unique Designs'], ['100%', 'Handpicked'], ['★ 4.9', 'Customer Rating']].map(([stat, label]) => (
+            {[['37+', 'Unique Designs'], ['100%', 'Handpicked']].map(([stat, label]) => (
               <div key={label} style={{ textAlign: 'center' }}>
                 <p style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', color: 'var(--charcoal)', lineHeight: 1 }}>{stat}</p>
                 <p style={{ fontSize: '0.72rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginTop: '0.35rem' }}>{label}</p>
