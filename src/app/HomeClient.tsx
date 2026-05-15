@@ -101,13 +101,13 @@ export default function HomeClient({ products }: { products: Product[] }) {
           style={{ position: 'absolute', inset: 0, objectFit: 'cover', objectPosition: 'center top' }}
         />
         <Image
-          src="/movileCoverSmall.png"
+          src="/movileCoverSmall (1).png"
           alt="Laay New Arrival"
           fill
           priority
           sizes="100vw"
           className="hidden-desktop"
-          style={{ position: 'absolute', inset: 0, objectFit: 'cover', objectPosition: '35% top' }}
+          style={{ position: 'absolute', inset: 0, objectFit: 'cover', objectPosition: 'center top' }}
         />
       </section>
 
