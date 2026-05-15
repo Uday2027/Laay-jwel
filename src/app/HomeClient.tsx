@@ -95,13 +95,19 @@ export default function HomeClient({ products }: { products: Product[] }) {
       }}>
         {/* Hero background image */}
         <Image
-          src="/cover_new.jpg"
+          src="/cover_withoutlogo.jpg"
           alt="Laay New Arrival"
           fill
           priority
           sizes="100vw"
           style={{ position: 'absolute', inset: 0, objectFit: 'cover', objectPosition: 'center top' }}
         />
+
+        {/* Brand name overlay */}
+        <div style={{ position: 'absolute', top: 'calc(var(--header-offset) + 4rem)', left: 0, right: 0, zIndex: 2, textAlign: 'center' }}>
+          <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: 'clamp(2rem, 5vw, 3.2rem)', color: 'var(--white)', letterSpacing: '0.15em', textTransform: 'uppercase', textShadow: '0 2px 20px rgba(0,0,0,0.35)' }}>Laay</h1>
+          <div style={{ height: '1px', width: '60px', background: 'rgba(255,255,255,0.5)', margin: '0.75rem auto 0' }} />
+        </div>
 
         {/* Bottom gradient for CTA readability */}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(44,40,38,0.65) 0%, rgba(44,40,38,0.2) 35%, transparent 60%)', zIndex: 1 }} />
