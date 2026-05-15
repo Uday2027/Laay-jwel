@@ -2,8 +2,6 @@ import { prisma } from '@/lib/prisma'
 import { unstable_cache } from 'next/cache'
 import ShopContent from './ShopContent'
 
-export const revalidate = 60
-
 const getProducts = unstable_cache(
   async () => prisma.product.findMany({
     orderBy: { createdAt: 'desc' },

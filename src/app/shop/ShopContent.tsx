@@ -35,6 +35,11 @@ export default function ShopContent({ initialProducts, initialCategory }: { init
   const [sort, setSort] = useState('featured')
   const { addToCart } = useApp()
 
+  // Sync category state when URL changes via <Link> navigation
+  useEffect(() => {
+    setCategory(initialCategory)
+  }, [initialCategory])
+
   useEffect(() => {
     setLoading(true)
     let filtered = initialProducts

@@ -21,12 +21,26 @@ const categories = [
   { name: 'Rings', slug: 'RINGS', image: '/products/ring-hero.jpg', desc: 'Finger artistry' },
 ]
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 export default function HomeClient({ products }: { products: Product[] }) {
+  const [shuffled, setShuffled] = React.useState<Product[]>(products)
   const heroRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
   const { addToCart } = useApp()
+
+  useEffect(() => {
+    setShuffled(shuffle(products))
+  }, [products])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -170,7 +184,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
             <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, marginTop: '0.25rem' }}>Featured Pieces</h2>
           </div>
           <div className="grid-auto">
-            {products.map(p => (
+            {shuffled.map(p => (
               <div key={p.id} className="product-card-wrap">
                 <ProductCard product={p} onAddToCart={addToCart} />
               </div>
