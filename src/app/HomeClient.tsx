@@ -107,7 +107,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
           priority
           sizes="100vw"
           className="hidden-desktop"
-          style={{ position: 'absolute', inset: 0, objectFit: 'cover', objectPosition: 'center top' }}
+          style={{ position: 'absolute', inset: 0, objectFit: 'cover', objectPosition: '65% top' }}
         />
       </section>
 
