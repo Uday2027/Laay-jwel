@@ -89,7 +89,6 @@ export default function HomeClient({ products }: { products: Product[] }) {
     <>
       <section ref={heroRef} style={{
         minHeight: '100vh', position: 'relative', overflow: 'hidden',
-        paddingTop: 'var(--header-offset)',
       }}>
         <Image
           src="/newbgcover.jpg"
@@ -98,7 +97,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
           priority
           sizes="100vw"
           className="hidden-mobile"
-          style={{ position: 'absolute', inset: 0, objectFit: 'cover', objectPosition: 'center top' }}
+          style={{ position: 'absolute', top: 'var(--header-offset)', left: 0, right: 0, bottom: 0, objectFit: 'cover', objectPosition: 'center top' }}
         />
         <Image
           src="/movileCoverSmall (1).png"
@@ -107,7 +106,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
           priority
           sizes="100vw"
           className="hidden-desktop"
-          style={{ position: 'absolute', inset: 0, objectFit: 'cover', objectPosition: 'center top' }}
+          style={{ position: 'absolute', top: 'var(--header-offset)', left: 0, right: 0, bottom: 0, objectFit: 'cover', objectPosition: 'center top' }}
         />
       </section>
 
