@@ -38,15 +38,24 @@ export const metadata: Metadata = {
 }
 
 async function getLayoutData() {
-  const [user, settings] = await Promise.all([
-    getAuthUser().catch(() => null),
-    prisma.settings.findUnique({ where: { id: 1 } }).catch(() => null),
-  ])
-  return {
-    user: user ? { id: user.userId, name: user.name, email: user.email, role: user.role } : null,
-    deliveryFee: settings?.deliveryFee ?? 80,
-    bannerText: settings?.bannerText ?? '',
-    bannerActive: settings?.bannerActive ?? false,
+  try {
+    const [user, settings] = await Promise.all([
+      getAuthUser().catch(() => null),
+      prisma.settings.findUnique({ where: { id: 1 } }).catch(() => null),
+    ])
+    return {
+      user: user ? { id: user.userId, name: user.name, email: user.email, role: user.role } : null,
+      deliveryFee: settings?.deliveryFee ?? 80,
+      bannerText: settings?.bannerText ?? '',
+      bannerActive: settings?.bannerActive ?? false,
+    }
+  } catch {
+    return {
+      user: null,
+      deliveryFee: 80,
+      bannerText: '',
+      bannerActive: false,
+    }
   }
 }
 

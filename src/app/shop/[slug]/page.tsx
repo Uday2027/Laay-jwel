@@ -4,30 +4,46 @@ import { unstable_cache } from 'next/cache'
 import { getAuthUser } from '@/lib/auth'
 import ProductDetailClient from './ProductDetailClient'
 
-export const revalidate = 60
-
 const getProduct = unstable_cache(
-  async (slug: string) => prisma.product.findUnique({ where: { slug } }),
+  async (slug: string) => {
+    try {
+      return await prisma.product.findUnique({ where: { slug } })
+    } catch {
+      return null
+    }
+  },
   ['product-detail'],
   { revalidate: 60 }
 )
 
 const getRelatedProducts = unstable_cache(
-  async (category: string, excludeId: number) => prisma.product.findMany({
-    where: { category, id: { not: excludeId } },
-    take: 4,
-    orderBy: { createdAt: 'desc' },
-    select: { id: true, name: true, slug: true, price: true, images: true, category: true, featured: true, stock: true },
-  }),
+  async (category: string, excludeId: number) => {
+    try {
+      return await prisma.product.findMany({
+        where: { category, id: { not: excludeId } },
+        take: 4,
+        orderBy: { createdAt: 'desc' },
+        select: { id: true, name: true, slug: true, price: true, images: true, category: true, featured: true, stock: true },
+      })
+    } catch {
+      return []
+    }
+  },
   ['related-products'],
   { revalidate: 60 }
 )
 
 const getReviews = unstable_cache(
-  async (productId: number) => prisma.review.findMany({
-    where: { productId },
-    orderBy: { createdAt: 'desc' },
-  }),
+  async (productId: number) => {
+    try {
+      return await prisma.review.findMany({
+        where: { productId },
+        orderBy: { createdAt: 'desc' },
+      })
+    } catch {
+      return []
+    }
+  },
   ['product-reviews'],
   { revalidate: 60 }
 )

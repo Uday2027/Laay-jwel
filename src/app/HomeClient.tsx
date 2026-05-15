@@ -39,7 +39,26 @@ export default function HomeClient({ products }: { products: Product[] }) {
   const { addToCart } = useApp()
 
   useEffect(() => {
-    setShuffled(shuffle(products))
+    // Ensure at least 1 from each category, then fill remaining slots
+    const byCategory: Record<string, Product[]> = { BRACELETS: [], EARRINGS: [], RINGS: [] }
+    products.forEach(p => { if (byCategory[p.category]) byCategory[p.category].push(p) })
+
+    const picked: Product[] = []
+    const usedIds = new Set<number>()
+
+    // Pick one from each category
+    ;(['BRACELETS', 'EARRINGS', 'RINGS'] as const).forEach(cat => {
+      const item = byCategory[cat].find(p => !usedIds.has(p.id))
+      if (item) { picked.push(item); usedIds.add(item.id) }
+    })
+
+    // Fill remaining slots up to 6
+    for (const p of products) {
+      if (picked.length >= 6) break
+      if (!usedIds.has(p.id)) { picked.push(p); usedIds.add(p.id) }
+    }
+
+    setShuffled(shuffle(picked))
   }, [products])
 
   useEffect(() => {
