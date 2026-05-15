@@ -321,6 +321,8 @@ tbody tr:last-child td { border-bottom: none; }
 }
 .hidden-mobile { display: block; }
 @media (max-width: 900px) { .hidden-mobile { display: none; } }
+.hidden-desktop { display: none; }
+@media (max-width: 900px) { .hidden-desktop { display: block; } }
 
 /* Category card hover effects */
 .cat-card-img-wrap {
