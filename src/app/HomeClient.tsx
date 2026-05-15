@@ -146,12 +146,6 @@ export default function HomeClient({ products }: { products: Product[] }) {
             </p>
           </div>
 
-          {/* Category labels */}
-          <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginBottom: '0.5rem' }}>
-            <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(0.85rem, 2.2vw, 1.05rem)', color: '#7A6A5A' }}>Earring</span>
-            <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(0.85rem, 2.2vw, 1.05rem)', color: '#7A6A5A' }}>Ring</span>
-          </div>
-
           {/* Image grid */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', width: '100%' }}>
             <Link href="/shop?category=EARRINGS" style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
@@ -168,8 +162,6 @@ export default function HomeClient({ products }: { products: Product[] }) {
             </Link>
           </div>
 
-          {/* Bracelet label */}
-          <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(0.85rem, 2.2vw, 1.05rem)', color: '#7A6A5A', marginTop: '0.5rem' }}>Bracelet</span>
           </div>
         </div>
       </section>
