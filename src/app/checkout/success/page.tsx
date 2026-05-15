@@ -21,8 +21,8 @@ function SuccessContent() {
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>Save this for tracking your order</p>
         </div>
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/shop" className="btn btn-primary">Continue Shopping</Link>
-          <Link href="/account" className="btn btn-outline">My Orders</Link>
+          <Link href={`/track?order=${orderNumber}`} className="btn btn-primary">View Receipt & Track</Link>
+          <Link href="/shop" className="btn btn-outline">Continue Shopping</Link>
         </div>
       </div>
     </div>
