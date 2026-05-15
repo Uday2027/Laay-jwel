@@ -324,6 +324,9 @@ tbody tr:last-child td { border-bottom: none; }
 .hidden-desktop { display: none; }
 @media (max-width: 900px) { .hidden-desktop { display: block; } }
 
+/* Hero image hover */
+.hero-img-hover:hover { transform: scale(1.04) !important; }
+
 /* Category card hover effects */
 .cat-card-img-wrap {
   transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.5s ease;

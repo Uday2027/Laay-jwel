@@ -100,9 +100,9 @@ export default function HomeClient({ products }: { products: Product[] }) {
             {/* Left — Earrings */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1rem', color: '#7A6A5A', marginBottom: '0.5rem' }}>Earring</span>
-              <div style={{ position: 'relative', aspectRatio: '1/1.2', width: '100%', overflow: 'hidden', borderRadius: '2px' }}>
-                <Image src="/Hero/earrings.png" alt="Earrings" fill priority sizes="33vw" style={{ objectFit: 'cover' }} />
-              </div>
+              <Link href="/shop?category=EARRINGS" style={{ position: 'relative', aspectRatio: '1/1.2', width: '100%', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
+                <Image src="/Hero/earrings.png" alt="Earrings" fill priority sizes="33vw" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+              </Link>
             </div>
 
             {/* Center — New Arrival + Bracelet */}
@@ -111,18 +111,18 @@ export default function HomeClient({ products }: { products: Product[] }) {
                 <span style={{ display: 'block', fontSize: '2.2rem', fontStyle: 'italic' }}>New</span>
                 <span style={{ display: 'block', fontSize: '2.8rem', fontStyle: 'italic' }}>Arrival</span>
               </h1>
-              <div style={{ marginTop: '1.5rem', position: 'relative', aspectRatio: '1.35/1', width: '100%', overflow: 'hidden', borderRadius: '2px' }}>
-                <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="40vw" style={{ objectFit: 'cover', objectPosition: 'center 25%' }} />
-              </div>
+              <Link href="/shop?category=BRACELETS" style={{ marginTop: '1.5rem', position: 'relative', aspectRatio: '1.35/1', width: '100%', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
+                <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="40vw" style={{ objectFit: 'cover', objectPosition: 'center 25%', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+              </Link>
               <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1rem', color: '#7A6A5A', marginTop: '0.5rem' }}>Bracelet</span>
             </div>
 
             {/* Right — Rings */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1rem', color: '#7A6A5A', marginBottom: '0.5rem' }}>Ring</span>
-              <div style={{ position: 'relative', aspectRatio: '1/1.2', width: '100%', overflow: 'hidden', borderRadius: '2px' }}>
-                <Image src="/Hero/rings.png" alt="Rings" fill priority sizes="33vw" style={{ objectFit: 'cover' }} />
-              </div>
+              <Link href="/shop?category=RINGS" style={{ position: 'relative', aspectRatio: '1/1.2', width: '100%', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
+                <Image src="/Hero/rings.png" alt="Rings" fill priority sizes="33vw" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+              </Link>
             </div>
           </div>
 
@@ -156,15 +156,15 @@ export default function HomeClient({ products }: { products: Product[] }) {
 
           {/* Image grid */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', width: '100%' }}>
-            <div style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px' }}>
-              <Image src="/Hero/earrings.png" alt="Earrings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover' }} />
-            </div>
-            <div style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px' }}>
-              <Image src="/Hero/rings.png" alt="Rings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover' }} />
-            </div>
-            <div style={{ position: 'relative', aspectRatio: '2/1.1', overflow: 'hidden', borderRadius: '2px', gridColumn: '1 / -1' }}>
-              <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="(max-width: 520px) 100vw, 520px" style={{ objectFit: 'cover', objectPosition: 'center 25%' }} />
-            </div>
+            <Link href="/shop?category=EARRINGS" style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
+              <Image src="/Hero/earrings.png" alt="Earrings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+            </Link>
+            <Link href="/shop?category=RINGS" style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
+              <Image src="/Hero/rings.png" alt="Rings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+            </Link>
+            <Link href="/shop?category=BRACELETS" style={{ position: 'relative', aspectRatio: '2/1.1', overflow: 'hidden', borderRadius: '2px', gridColumn: '1 / -1', cursor: 'pointer' }}>
+              <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="(max-width: 520px) 100vw, 520px" style={{ objectFit: 'cover', objectPosition: 'center 25%', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+            </Link>
           </div>
 
           {/* Bracelet label */}
