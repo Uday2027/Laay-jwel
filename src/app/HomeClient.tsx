@@ -134,9 +134,10 @@ export default function HomeClient({ products }: { products: Product[] }) {
         </div>
 
         {/* Mobile layout */}
-        <div className="hidden-desktop" style={{ width: '100%', maxWidth: '520px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          {/* Header text */}
-          <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+        <div className="hidden-desktop" style={{ width: '100%', maxWidth: '520px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {/* Header text */}
+            <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
             <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, lineHeight: 1.05, color: '#7A6A5A', marginBottom: '0.75rem' }}>
               <span style={{ display: 'block', fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontStyle: 'italic' }}>New</span>
               <span style={{ display: 'block', fontSize: 'clamp(2.4rem, 7vw, 4rem)', fontStyle: 'italic' }}>Arrival</span>
@@ -168,6 +169,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
 
           {/* Bracelet label */}
           <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(0.85rem, 2.2vw, 1.05rem)', color: '#7A6A5A', marginTop: '0.5rem' }}>Bracelet</span>
+          </div>
         </div>
       </section>
 
