@@ -23,9 +23,9 @@ const SORTS = [
 ]
 
 const CAT_HERO: Record<string, { image: string; desc: string }> = {
-  BRACELETS: { image: '/products/bracelet-hero.jpg', desc: 'Wrist jewels crafted to dazzle' },
-  EARRINGS: { image: '/products/earring-hero.jpg', desc: 'From subtle studs to grand chandeliers' },
-  RINGS: { image: '/products/ring-hero.jpg', desc: 'From solitaires to statement cocktails' },
+  BRACELETS: { image: '/Hero/bracelet.png', desc: 'Wrist jewels crafted to dazzle' },
+  EARRINGS: { image: '/Hero/earrings.png', desc: 'From subtle studs to grand chandeliers' },
+  RINGS: { image: '/Hero/rings.png', desc: 'From solitaires to statement cocktails' },
 }
 
 export default function ShopContent({ initialProducts, initialCategory }: { initialProducts: Product[]; initialCategory: string }) {

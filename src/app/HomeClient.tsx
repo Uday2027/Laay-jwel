@@ -16,9 +16,9 @@ interface Product {
 }
 
 const categories = [
-  { name: 'Bracelets', slug: 'BRACELETS', image: '/products/bracelet-hero.jpg', desc: 'Wrist adornments' },
-  { name: 'Earrings', slug: 'EARRINGS', image: '/products/earring-hero.jpg', desc: 'Ear jewels' },
-  { name: 'Rings', slug: 'RINGS', image: '/products/ring-hero.jpg', desc: 'Finger artistry' },
+  { name: 'Bracelets', slug: 'BRACELETS', image: '/Hero/bracelet.png', desc: 'Wrist adornments' },
+  { name: 'Earrings', slug: 'EARRINGS', image: '/Hero/earrings.png', desc: 'Ear jewels' },
+  { name: 'Rings', slug: 'RINGS', image: '/Hero/rings.png', desc: 'Finger artistry' },
 ]
 
 function shuffle<T>(arr: T[]): T[] {
@@ -158,17 +158,63 @@ export default function HomeClient({ products }: { products: Product[] }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', width: '100%' }}>
             <Link href="/shop?category=EARRINGS" style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
               <Image src="/Hero/earrings.png" alt="Earrings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+              <span className="hero-tap-badge">Shop Earrings →</span>
             </Link>
             <Link href="/shop?category=RINGS" style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
               <Image src="/Hero/rings.png" alt="Rings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+              <span className="hero-tap-badge">Shop Rings →</span>
             </Link>
             <Link href="/shop?category=BRACELETS" style={{ position: 'relative', aspectRatio: '2/1.1', overflow: 'hidden', borderRadius: '2px', gridColumn: '1 / -1', cursor: 'pointer' }}>
               <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="(max-width: 520px) 100vw, 520px" style={{ objectFit: 'cover', objectPosition: 'center 25%', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+              <span className="hero-tap-badge">Shop Bracelets →</span>
             </Link>
           </div>
 
           {/* Bracelet label */}
           <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(0.85rem, 2.2vw, 1.05rem)', color: '#7A6A5A', marginTop: '0.5rem' }}>Bracelet</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="section" style={{ background: 'var(--cream)' }}>
+        <div className="container">
+          <div className="text-center" style={{ marginBottom: '3.5rem' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+              <div style={{ height: '1px', width: '40px', background: 'var(--gold)' }} />
+              <span style={{ fontSize: '0.65rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--gold)' }}>Curated Selection</span>
+              <div style={{ height: '1px', width: '40px', background: 'var(--gold)' }} />
+            </div>
+            <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, marginTop: '0.25rem' }}>Featured Pieces</h2>
+          </div>
+          <div className="grid-auto">
+            {shuffled.map(p => (
+              <div key={p.id} className="product-card-wrap">
+                <ProductCard product={p} onAddToCart={addToCart} />
+              </div>
+            ))}
+          </div>
+          <div className="text-center" style={{ marginTop: '3.5rem' }}>
+            <Link href="/shop" className="btn btn-outline">View Full Collection →</Link>
+          </div>
+        </div>
+      </section>
+
+      <section style={{ background: 'var(--charcoal)', padding: '2.5rem 0', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(201,169,110,0.06) 0%, transparent 60%), radial-gradient(circle at 80% 50%, rgba(201,169,110,0.06) 0%, transparent 60%)' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
+        <div className="container" style={{ position: 'relative' }}>
+          <div className="perk-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '2rem', textAlign: 'center' }}>
+            {[
+              { icon: '💎', title: 'Bundle Reward', desc: 'Buy 3+ pieces and save an additional 5%' },
+              { icon: '🏷️', title: 'Exclusive Codes', desc: 'Unlock extra savings with coupon codes' },
+            ].map(perk => (
+              <div key={perk.title} className="perk-item">
+                <div style={{ width: 52, height: 52, borderRadius: '50%', border: '1px solid rgba(201,169,110,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: '1.5rem', background: 'rgba(201,169,110,0.06)' }}>{perk.icon}</div>
+                <h4 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, color: 'var(--gold)', marginBottom: '0.5rem', fontSize: '1rem' }}>{perk.title}</h4>
+                <p style={{ fontSize: '0.78rem', color: 'rgba(245,239,232,0.45)', lineHeight: 1.7 }}>{perk.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -197,49 +243,6 @@ export default function HomeClient({ products }: { products: Product[] }) {
                 </div>
               </Link>
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section style={{ background: 'var(--charcoal)', padding: '2.5rem 0', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(201,169,110,0.06) 0%, transparent 60%), radial-gradient(circle at 80% 50%, rgba(201,169,110,0.06) 0%, transparent 60%)' }} />
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
-        <div className="container" style={{ position: 'relative' }}>
-          <div className="perk-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '2rem', textAlign: 'center' }}>
-            {[
-              { icon: '💎', title: 'Bundle Reward', desc: 'Buy 3+ pieces and save an additional 5%' },
-              { icon: '🏷️', title: 'Exclusive Codes', desc: 'Unlock extra savings with coupon codes' },
-            ].map(perk => (
-              <div key={perk.title} className="perk-item">
-                <div style={{ width: 52, height: 52, borderRadius: '50%', border: '1px solid rgba(201,169,110,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: '1.5rem', background: 'rgba(201,169,110,0.06)' }}>{perk.icon}</div>
-                <h4 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, color: 'var(--gold)', marginBottom: '0.5rem', fontSize: '1rem' }}>{perk.title}</h4>
-                <p style={{ fontSize: '0.78rem', color: 'rgba(245,239,232,0.45)', lineHeight: 1.7 }}>{perk.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section" style={{ background: 'var(--cream)' }}>
-        <div className="container">
-          <div className="text-center" style={{ marginBottom: '3.5rem' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-              <div style={{ height: '1px', width: '40px', background: 'var(--gold)' }} />
-              <span style={{ fontSize: '0.65rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--gold)' }}>Curated Selection</span>
-              <div style={{ height: '1px', width: '40px', background: 'var(--gold)' }} />
-            </div>
-            <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, marginTop: '0.25rem' }}>Featured Pieces</h2>
-          </div>
-          <div className="grid-auto">
-            {shuffled.map(p => (
-              <div key={p.id} className="product-card-wrap">
-                <ProductCard product={p} onAddToCart={addToCart} />
-              </div>
-            ))}
-          </div>
-          <div className="text-center" style={{ marginTop: '3.5rem' }}>
-            <Link href="/shop" className="btn btn-outline">View Full Collection →</Link>
           </div>
         </div>
       </section>

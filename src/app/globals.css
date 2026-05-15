@@ -327,6 +327,45 @@ tbody tr:last-child td { border-bottom: none; }
 /* Hero image hover */
 .hero-img-hover:hover { transform: scale(1.04) !important; }
 
+/* Mobile hero tap-to-shop badge */
+.hero-tap-badge {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.92);
+  color: #7A6A5A;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.9rem;
+  border-radius: 100px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Mobile hero tap badge */
+.hero-tap-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.92);
+  color: #7A6A5A;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.9rem;
+  border-radius: 100px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+@media (min-width: 901px) {
+  .hero-tap-badge { display: none; }
+}
+
 /* Category card hover effects */
 .cat-card-img-wrap {
   transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.5s ease;
