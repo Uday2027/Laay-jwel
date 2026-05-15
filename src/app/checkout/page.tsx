@@ -36,7 +36,7 @@ export default function CheckoutPage() {
   }
 
   const discounts = calculateDiscounts({
-    items: cart, isLoggedIn: !!user, paidDelivery, couponDiscount,
+    items: cart, paidDelivery, couponDiscount,
     couponCode: couponApplied ? couponCode : '', deliveryFee: settings?.deliveryFee || deliveryFee,
   })
 
@@ -61,7 +61,7 @@ export default function CheckoutPage() {
         couponCode: couponApplied ? couponCode : null, paidDelivery,
         subtotal: discounts.subtotal, deliveryFee: discounts.deliveryFee,
         discount: discounts.subtotalDiscount, total: discounts.finalTotal,
-        discountBreakdown: { login: discounts.loginDiscount, bulk: discounts.bulkDiscount, delivery: discounts.deliveryDiscount, coupon: discounts.couponDiscount },
+        discountBreakdown: { bulk: discounts.bulkDiscount, delivery: discounts.deliveryDiscount, coupon: discounts.couponDiscount },
       })
     })
     const data = await res.json()
@@ -96,9 +96,6 @@ export default function CheckoutPage() {
           {step === 1 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, marginBottom: '0.5rem' }}>Contact Information</h2>
-              {!user && <div style={{ padding: '0.875rem', background: 'rgba(201,169,110,0.1)', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(201,169,110,0.3)', fontSize: '0.82rem', color: 'var(--charcoal)' }}>
-                💡 <a href="/account" style={{ color: 'var(--gold)', textDecoration: 'underline' }}>Login</a> to get 5% member discount automatically!
-              </div>}
               <div className="form-row">
                 <div className="input-group">
                   <label className="label">Full Name *</label>
@@ -246,7 +243,6 @@ export default function CheckoutPage() {
             <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem', marginTop: '0.5rem' }}>
               {[
                 { label: 'Subtotal', value: `৳${discounts.subtotal.toLocaleString()}` },
-                ...(discounts.loginDiscount ? [{ label: `Member discount (${discounts.loginDiscount}%)`, value: `-৳${Math.round(discounts.subtotal * discounts.loginDiscount / 100).toLocaleString()}`, gold: true }] : []),
                 ...(discounts.bulkDiscount ? [{ label: `Bulk discount (${discounts.bulkDiscount}%)`, value: `-৳${Math.round(discounts.subtotal * discounts.bulkDiscount / 100).toLocaleString()}`, gold: true }] : []),
                 ...(discounts.deliveryDiscount ? [{ label: `Advance delivery (${discounts.deliveryDiscount}%)`, value: `-৳${Math.round(discounts.subtotal * discounts.deliveryDiscount / 100).toLocaleString()}`, gold: true }] : []),
                 ...(discounts.couponDiscount ? [{ label: `Coupon (${couponCode})`, value: `-৳${Math.round(discounts.subtotal * discounts.couponDiscount / 100).toLocaleString()}`, gold: true }] : []),

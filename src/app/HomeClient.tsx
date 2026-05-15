@@ -177,9 +177,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
         <div className="container" style={{ position: 'relative' }}>
           <div className="perk-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '2rem', textAlign: 'center' }}>
             {[
-              { icon: '👑', title: 'Member Discount', desc: 'Sign in for an instant 5% off every order' },
               { icon: '💎', title: 'Bundle Reward', desc: 'Buy 3+ pieces and save an additional 5%' },
-              { icon: '📦', title: 'Advance Delivery', desc: 'Pre-pay delivery fee and enjoy 5% off' },
               { icon: '🏷️', title: 'Exclusive Codes', desc: 'Unlock extra savings with coupon codes' },
             ].map(perk => (
               <div key={perk.title} className="perk-item">

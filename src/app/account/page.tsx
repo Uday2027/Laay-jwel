@@ -92,7 +92,7 @@ export default function AccountPage() {
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '2rem' }}>{tab === 'login' ? 'Welcome Back' : 'Create Account'}</h1>
           <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem', fontSize: '0.87rem' }}>
-            {tab === 'login' ? 'Sign in to unlock your 5% member discount' : 'Join Laay for exclusive member benefits'}
+            {tab === 'login' ? 'Sign in to manage your orders and saved details' : 'Join Laay for exclusive updates and offers'}
           </p>
         </div>
 

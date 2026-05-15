@@ -8,7 +8,6 @@ export interface CartItem {
 }
 
 export interface DiscountResult {
-  loginDiscount: number      // 5% if logged in
   bulkDiscount: number       // 5% if 3+ items
   deliveryDiscount: number   // 5% if paying delivery in advance
   couponDiscount: number     // custom% from coupon
@@ -23,23 +22,21 @@ export interface DiscountResult {
 
 export function calculateDiscounts(params: {
   items: CartItem[]
-  isLoggedIn: boolean
   paidDelivery: boolean
   couponDiscount: number
   couponCode: string
   deliveryFee: number
 }): DiscountResult {
-  const { items, isLoggedIn, paidDelivery, couponDiscount, couponCode, deliveryFee } = params
+  const { items, paidDelivery, couponDiscount, couponCode, deliveryFee } = params
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
 
   // Calculate discount percentages (additive)
-  const loginDiscount = isLoggedIn ? 5 : 0
   const bulkDiscount = totalItems >= 3 ? 5 : 0
   const deliveryDiscount = paidDelivery ? 5 : 0
 
-  const totalDiscountPercent = loginDiscount + bulkDiscount + deliveryDiscount + couponDiscount
+  const totalDiscountPercent = bulkDiscount + deliveryDiscount + couponDiscount
 
   // Apply discount to subtotal
   const subtotalDiscount = (subtotal * totalDiscountPercent) / 100
@@ -52,7 +49,6 @@ export function calculateDiscounts(params: {
   const finalTotal = subtotal - subtotalDiscount + finalDeliveryFee
 
   return {
-    loginDiscount,
     bulkDiscount,
     deliveryDiscount,
     couponDiscount,
