@@ -1,26 +1,14 @@
 import { prisma } from '@/lib/prisma'
-import { unstable_cache } from 'next/cache'
 import ShopContent from './ShopContent'
-
-const getProducts = unstable_cache(
-  async () => {
-    try {
-      return await prisma.product.findMany({
-        orderBy: { createdAt: 'desc' },
-        select: { id: true, name: true, slug: true, price: true, images: true, category: true, featured: true, stock: true, createdAt: true },
-      })
-    } catch {
-      return []
-    }
-  },
-  ['shop-products'],
-  { revalidate: 60 }
-)
 
 export default async function ShopPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
   const { category: catParam } = await searchParams
-  const category = catParam || 'ALL'
-  const products = await getProducts()
+  const category = (catParam || 'ALL').trim().toUpperCase()
+
+  const products = await prisma.product.findMany({
+    orderBy: { createdAt: 'desc' },
+    select: { id: true, name: true, slug: true, price: true, images: true, category: true, featured: true, stock: true, createdAt: true },
+  })
 
   return <ShopContent initialProducts={products} initialCategory={category} />
 }

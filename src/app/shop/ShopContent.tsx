@@ -44,7 +44,7 @@ export default function ShopContent({ initialProducts, initialCategory }: { init
     setLoading(true)
     let filtered = initialProducts
     if (category !== 'ALL') {
-      filtered = initialProducts.filter(p => p.category === category)
+      filtered = initialProducts.filter(p => (p.category || '').trim().toUpperCase() === category)
     }
     setProducts(filtered)
     setLoading(false)
