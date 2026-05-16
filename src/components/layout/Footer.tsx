@@ -26,10 +26,7 @@ export default function Footer() {
           from { opacity: 0; transform: translateY(20px) scale(0.8); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .float-icon { animation: floatIn 0.5s ease backwards; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .float-icon:nth-child(1) { animation-delay: 0.1s; }
-        .float-icon:nth-child(2) { animation-delay: 0.2s; }
-        .float-icon:nth-child(3) { animation-delay: 0.3s; }
+        .float-icon { animation: floatIn 0.4s ease backwards; transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .float-wa:hover { transform: scale(1.12) !important; box-shadow: 0 6px 20px rgba(37,211,102,0.5) !important; }
         .float-ig:hover { transform: scale(1.12) !important; box-shadow: 0 6px 20px rgba(220,39,67,0.5) !important; }
         .float-fb:hover { transform: scale(1.12) !important; box-shadow: 0 6px 20px rgba(24,119,242,0.5) !important; }

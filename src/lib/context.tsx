@@ -30,6 +30,7 @@ interface AppContextType {
   setUser: (user: User | null) => void
   deliveryFee: number
   setDeliveryFee: (fee: number) => void
+  mounted: boolean
 }
 
 const AppContext = createContext<AppContextType | null>(null)
@@ -47,8 +48,10 @@ export function AppProvider({
   const [cartOpen, setCartOpen] = useState(false)
   const [user, setUser] = useState<User | null>(initialUser)
   const [deliveryFee, setDeliveryFee] = useState(initialDeliveryFee)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const saved = localStorage.getItem('laay_cart')
     if (saved) setCart(JSON.parse(saved))
   }, [])
@@ -80,7 +83,7 @@ export function AppProvider({
   const cartCount = cart.reduce((sum, i) => sum + i.quantity, 0)
 
   return (
-    <AppContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartOpen, setCartOpen, user, setUser, deliveryFee, setDeliveryFee }}>
+    <AppContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartOpen, setCartOpen, user, setUser, deliveryFee, setDeliveryFee, mounted }}>
       {children}
     </AppContext.Provider>
   )

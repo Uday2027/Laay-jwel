@@ -15,6 +15,9 @@ export default function AnnouncementBanner({ text, active }: { text: string; act
     }
     if (!bannerRef.current) return
 
+    // Set height immediately to avoid layout shift
+    el.style.setProperty('--banner-height', `${bannerRef.current.offsetHeight}px`)
+
     const observer = new ResizeObserver(entries => {
       for (const entry of entries) {
         el.style.setProperty('--banner-height', `${entry.contentRect.height}px`)

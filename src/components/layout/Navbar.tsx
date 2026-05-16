@@ -7,13 +7,14 @@ import styles from './Navbar.module.css'
 import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
-  const { cartCount, setCartOpen, user } = useApp()
+  const { cartCount, setCartOpen, user, mounted } = useApp()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
+    handleScroll()
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -50,7 +51,7 @@ export default function Navbar() {
           </Link>
           <button className={styles.cartBtn} onClick={() => setCartOpen(true)} aria-label="Open cart">
             <CartIcon />
-            {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
+            {mounted && cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
           </button>
         </nav>
 
@@ -74,7 +75,7 @@ export default function Navbar() {
             {user ? 'My Account' : 'Login'}
           </Link>
           <button className={styles.mobileCartBtn} onClick={() => { setCartOpen(true); setMenuOpen(false) }}>
-            Cart {cartCount > 0 && `(${cartCount})`}
+            Cart {mounted && cartCount > 0 ? `(${cartCount})` : ''}
           </button>
         </div>
       )}
