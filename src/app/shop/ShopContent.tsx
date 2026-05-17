@@ -5,7 +5,7 @@ import ProductCard from '@/components/shop/ProductCard'
 import { useApp } from '@/lib/context'
 
 interface Product {
-  id: number; name: string; slug: string; price: number; images: string; category: string; featured: boolean; createdAt: Date | string;
+  id: number; name: string; slug: string; price: number; images: string; category: string; featured: boolean; stock: number; createdAt: Date | string;
 }
 
 const CATEGORIES = [

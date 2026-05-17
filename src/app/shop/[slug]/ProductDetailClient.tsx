@@ -50,7 +50,11 @@ export default function ProductDetailClient({
   if (images.length === 0) images.push('/placeholder.jpg')
 
   const handleAddToCart = () => {
-    addToCart({ productId: product.id, name: product.name, price: product.price, image: images[0], slug: product.slug })
+    if (product.stock <= 0) {
+      alert('This item is out of stock')
+      return
+    }
+    addToCart({ productId: product.id, name: product.name, price: product.price, image: images[0], slug: product.slug, stock: product.stock })
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)
   }

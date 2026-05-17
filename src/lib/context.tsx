@@ -8,6 +8,7 @@ interface CartItem {
   image: string
   quantity: number
   slug: string
+  stock: number
 }
 
 interface User {
@@ -21,7 +22,7 @@ interface AppContextType {
   cart: CartItem[]
   addToCart: (item: Omit<CartItem, 'quantity'>) => void
   removeFromCart: (productId: number) => void
-  updateQuantity: (productId: number, quantity: number) => void
+  updateQuantity: (productId: number, quantity: number) => boolean
   clearCart: () => void
   cartCount: number
   cartOpen: boolean
@@ -53,7 +54,18 @@ export function AppProvider({
   useEffect(() => {
     setMounted(true)
     const saved = localStorage.getItem('laay_cart')
-    if (saved) setCart(JSON.parse(saved))
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        // Backward compat: old carts may not have stock field
+        setCart(parsed.map((item: CartItem & { stock?: number }) => ({
+          ...item,
+          stock: typeof item.stock === 'number' ? item.stock : 999,
+        })))
+      } catch {
+        setCart([])
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -63,7 +75,18 @@ export function AppProvider({
   const addToCart = useCallback((item: Omit<CartItem, 'quantity'>) => {
     setCart(prev => {
       const existing = prev.find(i => i.productId === item.productId)
-      if (existing) return prev.map(i => i.productId === item.productId ? { ...i, quantity: i.quantity + 1 } : i)
+      if (existing) {
+        const newQty = existing.quantity + 1
+        if (newQty > existing.stock) {
+          alert(`Only ${existing.stock} item(s) available in stock`)
+          return prev
+        }
+        return prev.map(i => i.productId === item.productId ? { ...i, quantity: newQty } : i)
+      }
+      if (item.stock <= 0) {
+        alert('This item is out of stock')
+        return prev
+      }
       return [...prev, { ...item, quantity: 1 }]
     })
     setCartOpen(true)
@@ -74,9 +97,15 @@ export function AppProvider({
   }, [])
 
   const updateQuantity = useCallback((productId: number, quantity: number) => {
-    if (quantity <= 0) { removeFromCart(productId); return }
+    if (quantity <= 0) { removeFromCart(productId); return true }
+    const item = cart.find(i => i.productId === productId)
+    if (item && quantity > item.stock) {
+      alert(`Only ${item.stock} item(s) available in stock`)
+      return false
+    }
     setCart(prev => prev.map(i => i.productId === productId ? { ...i, quantity } : i))
-  }, [removeFromCart])
+    return true
+  }, [cart, removeFromCart])
 
   const clearCart = useCallback(() => setCart([]), [])
 

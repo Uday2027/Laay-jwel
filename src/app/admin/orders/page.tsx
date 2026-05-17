@@ -5,7 +5,7 @@ interface Order {
   id: number; orderNumber: string; name: string; phone: string; status: string;
   total: number; paymentMethod: string; transactionId: string | null;
   createdAt: string; couponCode: string | null; discount: number; paidDelivery: boolean;
-  items: Array<{ quantity: number; price: number; product: { name: string } }>;
+  items: Array<{ quantity: number; price: number; product: { name: string; slug: string; images: string } }>;
 }
 
 const STATUSES = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED']
@@ -36,7 +36,10 @@ export default function AdminOrders() {
 
   return (
     <div>
-      <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '2rem', marginBottom: '2rem' }}>Orders</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '2rem' }}>Orders</h1>
+        <button className="btn btn-primary btn-sm" onClick={() => window.location.href = '/admin/orders/new'}>+ Create Order</button>
+      </div>
 
       {/* Search & Filters */}
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
@@ -98,12 +101,19 @@ export default function AdminOrders() {
             ))}
             <div style={{ marginTop: '1rem' }}>
               <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Items</p>
-              {selected.items?.map((item, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', padding: '0.3rem 0' }}>
-                  <span>{item.product?.name} × {item.quantity}</span>
-                  <span>৳{(item.price * item.quantity).toLocaleString()}</span>
-                </div>
-              ))}
+              {selected.items?.map((item, i) => {
+                const images = (() => { try { return JSON.parse(item.product.images) } catch { return [] } })()
+                const img = images[0] || '/placeholder.jpg'
+                return (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'space-between', fontSize: '0.82rem', padding: '0.4rem 0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1 }}>
+                      <img src={img} alt="" style={{ width: 36, height: 44, objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} />
+                      <a href={`/shop/${item.product.slug}`} target="_blank" style={{ color: 'var(--charcoal)' }}>{item.product?.name} × {item.quantity}</a>
+                    </div>
+                    <span>৳{(item.price * item.quantity).toLocaleString()}</span>
+                  </div>
+                )
+              })}
             </div>
             <div style={{ marginTop: '1.25rem', padding: '1rem', background: 'var(--cream)', borderRadius: 'var(--radius-sm)', display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ fontFamily: 'var(--font-serif)' }}>Total</span>

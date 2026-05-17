@@ -66,7 +66,10 @@ export default function CheckoutPage() {
     })
     const data = await res.json()
     if (res.ok) { clearCart(); router.push(`/checkout/success?order=${data.orderNumber}`) }
-    else { alert(data.error || 'Something went wrong'); setLoading(false) }
+    else {
+      alert(data.error || 'Something went wrong')
+      setLoading(false)
+    }
   }
 
   return (

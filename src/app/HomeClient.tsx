@@ -12,7 +12,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 interface Product {
   id: number; name: string; slug: string; price: number;
-  images: string; category: string; featured: boolean;
+  images: string; category: string; featured: boolean; stock: number;
 }
 
 const categories = [
@@ -63,23 +63,23 @@ export default function HomeClient({ products }: { products: Product[] }) {
       // Hero animations removed — image is clean with no overlays
 
       gsap.utils.toArray<HTMLElement>('.product-card-wrap').forEach((el, i) => {
-        gsap.from(el, { y: 50, opacity: 0, duration: 0.8, delay: (i % 3) * 0.12, ease: 'power2.out',
-          scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none none' }
+        gsap.from(el, { y: 30, duration: 0.7, delay: (i % 3) * 0.1, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 92%', toggleActions: 'play none none none' }
         })
       })
 
       gsap.utils.toArray<HTMLElement>('.cat-card').forEach((el, i) => {
-        gsap.from(el, { y: 40, opacity: 0, duration: 0.7, delay: i * 0.15, ease: 'power2.out',
-          scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+        gsap.from(el, { y: 24, duration: 0.6, delay: i * 0.12, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none none' }
         })
       })
 
-      gsap.from('.about-text', { y: 30, opacity: 0, duration: 1.1, ease: 'power2.out',
-        scrollTrigger: { trigger: '.about-text', start: 'top 85%' }
+      gsap.from('.about-text', { y: 20, duration: 0.9, ease: 'power2.out',
+        scrollTrigger: { trigger: '.about-text', start: 'top 88%' }
       })
 
-      gsap.from('.perk-item', { y: 25, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out',
-        scrollTrigger: { trigger: '.perk-item', start: 'top 88%', toggleActions: 'play none none none' }
+      gsap.from('.perk-item', { y: 16, duration: 0.5, stagger: 0.08, ease: 'power2.out',
+        scrollTrigger: { trigger: '.perk-item', start: 'top 90%', toggleActions: 'play none none none' }
       })
     })
     return () => ctx.revert()

@@ -13,6 +13,7 @@ export default function AdminProducts() {
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const hasAutoOpened = useRef(false)
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -22,20 +23,50 @@ export default function AdminProducts() {
 
   useEffect(() => { loadProducts() }, [loadProducts])
 
-  // Auto-open edit form if ?edit=<id> is present
+  // Auto-open edit form if ?edit=<id> is present — only once per mount
   useEffect(() => {
+    if (hasAutoOpened.current) return
     const editId = searchParams.get('edit')
     if (!editId || products.length === 0) return
     const p = products.find(prod => prod.id === parseInt(editId))
-    if (p) openEdit(p)
+    if (p) {
+      hasAutoOpened.current = true
+      openEdit(p)
+      // Clear the edit param from URL so it doesn't re-trigger after mutations
+      router.replace('/admin/products', { scroll: false })
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, products])
 
-  const openNew = () => { setEditing(null); setForm({ name: '', description: '', price: '', category: 'BRACELETS', stock: '', featured: false, images: [] }); setShowForm(true) }
-  const openEdit = (p: Product) => {
-    const imgs = (() => { try { return JSON.parse(p.images) } catch { return [] } })()
-    setEditing(p); setForm({ name: p.name, description: p.description, price: String(p.price), category: p.category, stock: String(p.stock), featured: p.featured, images: Array.isArray(imgs) ? imgs : [] })
+  const openNew = useCallback(() => {
+    setEditing(null)
+    setForm({ name: '', description: '', price: '', category: 'BRACELETS', stock: '', featured: false, images: [] })
     setShowForm(true)
-  }
+  }, [])
+
+  const openEdit = useCallback((p: Product) => {
+    const imgs = (() => { try { return JSON.parse(p.images) } catch { return [] } })()
+    setEditing(p)
+    setForm({
+      name: p.name,
+      description: p.description || '',
+      price: String(p.price),
+      category: p.category,
+      stock: String(p.stock),
+      featured: p.featured,
+      images: Array.isArray(imgs) ? imgs : []
+    })
+    setShowForm(true)
+  }, [])
+
+  const closeForm = useCallback(() => {
+    setShowForm(false)
+    setEditing(null)
+    // Also clear any lingering edit param from URL
+    if (searchParams.get('edit')) {
+      router.replace('/admin/products', { scroll: false })
+    }
+  }, [searchParams, router])
 
   const save = async () => {
     setSaving(true)
@@ -43,7 +74,15 @@ export default function AdminProducts() {
     const url = editing ? `/api/products/${editing.id}` : '/api/products'
     const method = editing ? 'PUT' : 'POST'
     const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-    if (res.ok) { loadProducts(); setShowForm(false); setEditing(null); router.refresh() }
+    if (res.ok) {
+      loadProducts()
+      setShowForm(false)
+      setEditing(null)
+      router.refresh()
+    } else {
+      const data = await res.json().catch(() => ({}))
+      alert(data.error || 'Failed to save product')
+    }
     setSaving(false)
   }
 
@@ -190,14 +229,14 @@ export default function AdminProducts() {
               )}
             </div>
 
-            <div className="input-group"><label className="label">Description *</label><textarea className="input" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} /></div>
+            <div className="input-group"><label className="label">Description *</label><textarea className="input" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={4} /></div>
             <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', cursor: 'pointer', fontSize: '0.85rem' }}>
               <input type="checkbox" checked={form.featured} onChange={e => setForm(f => ({ ...f, featured: e.target.checked }))} />
               Mark as Featured (shown on homepage)
             </label>
             <div style={{ display: 'flex', gap: '0.75rem' }}>
               <button className="btn btn-primary" onClick={save} disabled={saving || uploading}>{saving ? 'Saving...' : editing ? 'Save Changes' : 'Create Product'}</button>
-              <button className="btn btn-outline" onClick={() => { setShowForm(false); setEditing(null) }}>Cancel</button>
+              <button className="btn btn-outline" onClick={closeForm}>Cancel</button>
             </div>
           </div>
         </div>

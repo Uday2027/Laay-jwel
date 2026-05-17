@@ -73,12 +73,23 @@ export default function CartDrawer() {
                   <div style={{ flex: 1 }}>
                     <p style={{ fontFamily: 'var(--font-serif)', fontSize: '0.95rem', marginBottom: '0.25rem', color: 'var(--text-primary)', lineHeight: 1.3 }}>{item.name}</p>
                     <p style={{ color: 'var(--gold)', fontWeight: 500, fontSize: '0.87rem' }}>৳{item.price.toLocaleString()}</p>
+                    <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>Stock: {item.stock}</p>
                     {/* Qty controls */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.75rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)' }}>
                         <button onClick={() => updateQuantity(item.productId, item.quantity - 1)} style={{ padding: '0.2rem 0.6rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--text-secondary)' }}>−</button>
                         <span style={{ padding: '0 0.5rem', fontSize: '0.85rem', minWidth: '24px', textAlign: 'center' }}>{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.productId, item.quantity + 1)} style={{ padding: '0.2rem 0.6rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--text-secondary)' }}>+</button>
+                        <button
+                          onClick={() => {
+                            if (item.quantity >= item.stock) {
+                              alert(`Only ${item.stock} item(s) available in stock`)
+                              return
+                            }
+                            updateQuantity(item.productId, item.quantity + 1)
+                          }}
+                          style={{ padding: '0.2rem 0.6rem', background: 'none', border: 'none', cursor: item.quantity >= item.stock ? 'not-allowed' : 'pointer', fontSize: '1rem', color: item.quantity >= item.stock ? 'var(--border)' : 'var(--text-secondary)' }}
+                          disabled={item.quantity >= item.stock}
+                        >+</button>
                       </div>
                       <button onClick={() => removeFromCart(item.productId)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.72rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', textDecoration: 'underline' }}>Remove</button>
                     </div>

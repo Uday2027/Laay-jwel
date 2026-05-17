@@ -4,17 +4,19 @@ import Image from 'next/image'
 import { cloudinaryUrl } from '@/lib/images'
 
 interface Product {
-  id: number; name: string; slug: string; price: number; images: string; category: string;
+  id: number; name: string; slug: string; price: number; images: string; category: string; stock?: number;
 }
 
 interface Props {
   product: Product
-  onAddToCart: (item: { productId: number; name: string; price: number; image: string; slug: string }) => void
+  onAddToCart: (item: { productId: number; name: string; price: number; image: string; slug: string; stock: number }) => void
 }
 
 export default function ProductCard({ product, onAddToCart }: Props) {
   const images = (() => { try { return JSON.parse(product.images) } catch { return [] } })()
   const image = images[0] || '/placeholder.jpg'
+  const outOfStock = (product.stock ?? 0) <= 0
+  const lowStock = (product.stock ?? 0) > 0 && (product.stock ?? 0) <= 3
 
   return (
     <div style={{ background: 'var(--white)', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', transition: 'box-shadow 0.3s ease, transform 0.3s ease' }}
@@ -33,10 +35,20 @@ export default function ProductCard({ product, onAddToCart }: Props) {
           onMouseLeave={e => { (e.target as HTMLImageElement).style.transform = '' }}
           onError={e => { (e.target as HTMLImageElement).src = '/placeholder.jpg' }}
         />
-        <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem' }}>
+        <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
           <span className="badge badge-gold" style={{ background: 'rgba(245,239,232,0.9)', backdropFilter: 'blur(4px)', fontSize: '0.58rem' }}>
             {product.category}
           </span>
+          {outOfStock && (
+            <span className="badge badge-red" style={{ background: 'rgba(192,57,43,0.9)', color: '#fff', backdropFilter: 'blur(4px)', fontSize: '0.58rem' }}>
+              Out of Stock
+            </span>
+          )}
+          {lowStock && (
+            <span className="badge badge-orange" style={{ background: 'rgba(180,83,9,0.9)', color: '#fff', backdropFilter: 'blur(4px)', fontSize: '0.58rem' }}>
+              Low Stock
+            </span>
+          )}
         </div>
       </Link>
 
@@ -51,11 +63,12 @@ export default function ProductCard({ product, onAddToCart }: Props) {
             ৳{product.price.toLocaleString()}
           </p>
           <button
-            onClick={() => onAddToCart({ productId: product.id, name: product.name, price: product.price, image, slug: product.slug })}
+            onClick={() => onAddToCart({ productId: product.id, name: product.name, price: product.price, image, slug: product.slug, stock: product.stock ?? 0 })}
             className="btn btn-primary"
-            style={{ padding: 'clamp(0.35rem, 1vw, 0.6rem) clamp(0.5rem, 1.5vw, 1.25rem)', fontSize: 'clamp(0.6rem, 1.5vw, 0.72rem)', whiteSpace: 'nowrap' }}
+            disabled={outOfStock}
+            style={{ padding: 'clamp(0.35rem, 1vw, 0.6rem) clamp(0.5rem, 1.5vw, 1.25rem)', fontSize: 'clamp(0.6rem, 1.5vw, 0.72rem)', whiteSpace: 'nowrap', opacity: outOfStock ? 0.5 : 1, cursor: outOfStock ? 'not-allowed' : 'pointer' }}
           >
-            Add
+            {outOfStock ? 'Out of Stock' : 'Add'}
           </button>
         </div>
       </div>

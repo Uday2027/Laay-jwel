@@ -48,6 +48,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const body = await req.json()
   const authUser = await getAuthUserFromRequest(req)
+  const admin = isAdmin(authUser)
 
   const { name, phone, address, city, notes, items, paymentMethod, transactionId, couponCode, paidDelivery, subtotal, deliveryFee, discount, total } = body
 
@@ -55,28 +56,63 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
+  // Validate stock for each item
+  const productIds = items.map((item: { productId: number }) => item.productId)
+  const products = await prisma.product.findMany({
+    where: { id: { in: productIds } },
+    select: { id: true, stock: true, name: true }
+  })
+
+  const stockMap = new Map(products.map(p => [p.id, p]))
+  const stockErrors: string[] = []
+
+  for (const item of items as { productId: number; quantity: number }[]) {
+    const product = stockMap.get(item.productId)
+    if (!product) {
+      stockErrors.push(`Product #${item.productId} not found`)
+    } else if (product.stock < item.quantity) {
+      stockErrors.push(`Insufficient stock for "${product.name}" (available: ${product.stock}, requested: ${item.quantity})`)
+    }
+  }
+
+  if (stockErrors.length > 0) {
+    return NextResponse.json({ error: stockErrors.join('; ') }, { status: 400 })
+  }
+
   const orderNumber = generateOrderNumber()
 
-  const order = await prisma.order.create({
-    data: {
-      orderNumber, name, phone, address, city, notes: notes || '',
-      userId: authUser?.userId || null,
-      status: 'PENDING',
-      items: {
-        create: items.map((item: { productId: number; quantity: number; price: number }) => ({
-          productId: item.productId,
-          quantity: item.quantity,
-          price: item.price,
-        }))
+  // Use transaction to create order and decrement stock atomically
+  const order = await prisma.$transaction(async (tx) => {
+    // Decrement stock
+    for (const item of items as { productId: number; quantity: number }[]) {
+      await tx.product.update({
+        where: { id: item.productId },
+        data: { stock: { decrement: item.quantity } }
+      })
+    }
+
+    // Create order
+    return tx.order.create({
+      data: {
+        orderNumber, name, phone, address, city, notes: notes || '',
+        userId: authUser?.userId || null,
+        status: 'PENDING',
+        items: {
+          create: items.map((item: { productId: number; quantity: number; price: number }) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price,
+          }))
+        },
+        subtotal, deliveryFee, discount: discount || 0, total,
+        paymentMethod: paymentMethod || 'cod',
+        transactionId: transactionId || null,
+        couponCode: couponCode || null,
+        paidDelivery: paidDelivery || false,
+        discountBreakdown: JSON.stringify(body.discountBreakdown || {}),
       },
-      subtotal, deliveryFee, discount: discount || 0, total,
-      paymentMethod: paymentMethod || 'cod',
-      transactionId: transactionId || null,
-      couponCode: couponCode || null,
-      paidDelivery: paidDelivery || false,
-      discountBreakdown: JSON.stringify(body.discountBreakdown || {}),
-    },
-    include: { items: true }
+      include: { items: true }
+    })
   })
 
   // Update coupon stats if used

@@ -3,14 +3,43 @@ import { useState, useEffect } from 'react'
 import { useApp } from '@/lib/context'
 import { useRouter } from 'next/navigation'
 
+interface OrderItem {
+  id: number
+  quantity: number
+  price: number
+  productId: number
+  product: { id: number; name: string; slug: string; images: string }
+}
+
+interface Order {
+  id: number
+  orderNumber: string
+  total: number
+  status: string
+  createdAt: string
+  items: OrderItem[]
+}
+
 export default function AccountPage() {
   const { user, setUser } = useApp()
   const router = useRouter()
   const [tab, setTab] = useState<'login' | 'register'>('login')
-  const [orders, setOrders] = useState<Array<{ id: number; orderNumber: string; total: number; status: string; createdAt: string }>>([])
+  const [orders, setOrders] = useState<Order[]>([])
+  const [ordersLoading, setOrdersLoading] = useState(false)
   const [form, setForm] = useState({ name: '', email: '', password: '', phone: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (user) {
+      setOrdersLoading(true)
+      fetch('/api/orders/my')
+        .then(r => r.json())
+        .then(d => { setOrders(d.orders || []) })
+        .catch(() => setOrders([]))
+        .finally(() => setOrdersLoading(false))
+    }
+  }, [user])
 
   const handleAuth = async () => {
     setError(''); setLoading(true)
@@ -58,7 +87,9 @@ export default function AccountPage() {
           </div>
           <div className="admin-card" style={{ marginTop: '1.5rem' }}>
             <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, marginBottom: '1.25rem' }}>My Orders</h3>
-            {orders.length === 0 ? (
+            {ordersLoading ? (
+              <div style={{ textAlign: 'center', padding: '2rem 0' }}><div className="spinner" style={{ margin: '0 auto' }} /></div>
+            ) : orders.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '2rem 0' }}>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>No orders yet</p>
                 <a href="/shop" className="btn btn-primary btn-sm">Start Shopping</a>
@@ -66,7 +97,7 @@ export default function AccountPage() {
             ) : (
               <div className="table-wrap">
                 <table>
-                  <thead><tr><th>Order #</th><th>Date</th><th>Total</th><th>Status</th></tr></thead>
+                  <thead><tr><th>Order #</th><th>Date</th><th>Total</th><th>Status</th><th>Items</th></tr></thead>
                   <tbody>
                     {orders.map(o => (
                       <tr key={o.id}>
@@ -74,6 +105,9 @@ export default function AccountPage() {
                         <td>{new Date(o.createdAt).toLocaleDateString()}</td>
                         <td>৳{o.total.toLocaleString()}</td>
                         <td><span className={`badge ${STATUS_COLORS[o.status] || 'badge-gray'}`}>{o.status}</span></td>
+                        <td style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                          {o.items.map(i => `${i.product.name} ×${i.quantity}`).join(', ')}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
