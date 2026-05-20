@@ -14,7 +14,7 @@ export async function GET(req: Request) {
   const where: Record<string, unknown> = {}
   if (category) where.category = category
   if (featured === 'true') where.featured = true
-  if (search) where.name = { contains: search }
+  if (search) where.name = { contains: search, mode: 'insensitive' }
 
   const orderBy: Record<string, string> =
     sort === 'asc' ? { price: 'asc' }

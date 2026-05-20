@@ -11,6 +11,15 @@ interface CartItem {
   stock: number
 }
 
+interface WishlistItem {
+  productId: number
+  name: string
+  price: number
+  image: string
+  slug: string
+  stock: number
+}
+
 interface User {
   id: number
   name: string
@@ -27,6 +36,11 @@ interface AppContextType {
   cartCount: number
   cartOpen: boolean
   setCartOpen: (open: boolean) => void
+  wishlist: WishlistItem[]
+  addToWishlist: (item: WishlistItem) => void
+  removeFromWishlist: (productId: number) => void
+  isInWishlist: (productId: number) => boolean
+  wishlistCount: number
   user: User | null
   setUser: (user: User | null) => void
   deliveryFee: number
@@ -46,6 +60,7 @@ export function AppProvider({
   initialDeliveryFee?: number
 }) {
   const [cart, setCart] = useState<CartItem[]>([])
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([])
   const [cartOpen, setCartOpen] = useState(false)
   const [user, setUser] = useState<User | null>(initialUser)
   const [deliveryFee, setDeliveryFee] = useState(initialDeliveryFee)
@@ -53,11 +68,10 @@ export function AppProvider({
 
   useEffect(() => {
     setMounted(true)
-    const saved = localStorage.getItem('laay_cart')
-    if (saved) {
+    const savedCart = localStorage.getItem('laay_cart')
+    if (savedCart) {
       try {
-        const parsed = JSON.parse(saved)
-        // Backward compat: old carts may not have stock field
+        const parsed = JSON.parse(savedCart)
         setCart(parsed.map((item: CartItem & { stock?: number }) => ({
           ...item,
           stock: typeof item.stock === 'number' ? item.stock : 999,
@@ -66,11 +80,24 @@ export function AppProvider({
         setCart([])
       }
     }
+
+    const savedWishlist = localStorage.getItem('laay_wishlist')
+    if (savedWishlist) {
+      try {
+        setWishlist(JSON.parse(savedWishlist))
+      } catch {
+        setWishlist([])
+      }
+    }
   }, [])
 
   useEffect(() => {
     localStorage.setItem('laay_cart', JSON.stringify(cart))
   }, [cart])
+
+  useEffect(() => {
+    localStorage.setItem('laay_wishlist', JSON.stringify(wishlist))
+  }, [wishlist])
 
   const addToCart = useCallback((item: Omit<CartItem, 'quantity'>) => {
     setCart(prev => {
@@ -109,10 +136,30 @@ export function AppProvider({
 
   const clearCart = useCallback(() => setCart([]), [])
 
+  const addToWishlist = useCallback((item: WishlistItem) => {
+    setWishlist(prev => {
+      if (prev.some(i => i.productId === item.productId)) return prev
+      return [...prev, item]
+    })
+  }, [])
+
+  const removeFromWishlist = useCallback((productId: number) => {
+    setWishlist(prev => prev.filter(i => i.productId !== productId))
+  }, [])
+
+  const isInWishlist = useCallback((productId: number) => {
+    return wishlist.some(i => i.productId === productId)
+  }, [wishlist])
+
   const cartCount = cart.reduce((sum, i) => sum + i.quantity, 0)
+  const wishlistCount = wishlist.length
 
   return (
-    <AppContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartOpen, setCartOpen, user, setUser, deliveryFee, setDeliveryFee, mounted }}>
+    <AppContext.Provider value={{
+      cart, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartOpen, setCartOpen,
+      wishlist, addToWishlist, removeFromWishlist, isInWishlist, wishlistCount,
+      user, setUser, deliveryFee, setDeliveryFee, mounted
+    }}>
       {children}
     </AppContext.Provider>
   )

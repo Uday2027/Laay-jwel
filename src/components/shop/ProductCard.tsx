@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { cloudinaryUrl } from '@/lib/images'
+import { useApp } from '@/lib/context'
 
 interface Product {
   id: number; name: string; slug: string; price: number; images: string; category: string; stock?: number;
@@ -13,16 +14,63 @@ interface Props {
 }
 
 export default function ProductCard({ product, onAddToCart }: Props) {
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useApp()
   const images = (() => { try { return JSON.parse(product.images) } catch { return [] } })()
   const image = images[0] || '/placeholder.jpg'
   const outOfStock = (product.stock ?? 0) <= 0
   const lowStock = (product.stock ?? 0) > 0 && (product.stock ?? 0) <= 3
+  const isWish = isInWishlist(product.id)
 
   return (
-    <div style={{ background: 'var(--white)', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', transition: 'box-shadow 0.3s ease, transform 0.3s ease' }}
+    <div style={{ background: 'var(--white)', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', position: 'relative', transition: 'box-shadow 0.3s ease, transform 0.3s ease' }}
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-md)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)' }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-sm)'; (e.currentTarget as HTMLDivElement).style.transform = '' }}
     >
+      {/* Floating Heart Button */}
+      <button
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          if (isWish) {
+            removeFromWishlist(product.id)
+          } else {
+            addToWishlist({
+              productId: product.id,
+              name: product.name,
+              price: product.price,
+              image,
+              slug: product.slug,
+              stock: product.stock ?? 0
+            })
+          }
+        }}
+        style={{
+          position: 'absolute',
+          top: '0.5rem',
+          right: '0.5rem',
+          background: 'rgba(245, 239, 232, 0.85)',
+          border: 'none',
+          borderRadius: '50%',
+          width: '32px',
+          height: '32px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          color: isWish ? '#c0392b' : 'var(--text-secondary)',
+          boxShadow: 'var(--shadow-sm)',
+          transition: 'all 0.2s ease',
+          zIndex: 10
+        }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.background = 'var(--white)' }}
+        onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.background = 'rgba(245, 239, 232, 0.85)' }}
+        aria-label={isWish ? "Remove from wishlist" : "Add to wishlist"}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill={isWish ? '#c0392b' : 'none'} stroke="currentColor" strokeWidth="1.5">
+          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+        </svg>
+      </button>
+
       <Link href={`/shop/${product.slug}`} style={{ display: 'block', overflow: 'hidden', aspectRatio: '3/4', position: 'relative', background: 'var(--cream-dark)' }}>
         <Image
           src={cloudinaryUrl(image, { width: 400 })}

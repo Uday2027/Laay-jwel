@@ -72,7 +72,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${cormorant.variable} ${jost.variable} ${greatVibes.variable}`}>
       <head>
-        <link rel="icon" href="/logo.png" />
+        <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/favicon.png" type="image/png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>

@@ -19,6 +19,7 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod')
   const [transactionId, setTransactionId] = useState('')
   const [loading, setLoading] = useState(false)
+  const [giftWrap, setGiftWrap] = useState(false)
   const [form, setForm] = useState({ name: user?.name || '', phone: '', address: '', city: '', notes: '' })
 
   useEffect(() => {
@@ -52,15 +53,18 @@ export default function CheckoutPage() {
   const placeOrder = async () => {
     if (paymentMethod === 'online' && !transactionId.trim()) { alert('Please enter your Transaction ID'); return }
     setLoading(true)
+    const finalTotal = discounts.finalTotal + (giftWrap ? 150 : 0)
     const res = await fetch('/api/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        ...form, items: cart.map(i => ({ productId: i.productId, quantity: i.quantity, price: i.price })),
+        ...form,
+        notes: giftWrap ? `🎁 [GIFT WRAPPING REQUESTED] ${form.notes || ''}`.trim() : form.notes,
+        items: cart.map(i => ({ productId: i.productId, quantity: i.quantity, price: i.price })),
         paymentMethod, transactionId: transactionId || null,
         couponCode: couponApplied ? couponCode : null, paidDelivery,
         subtotal: discounts.subtotal, deliveryFee: discounts.deliveryFee,
-        discount: discounts.subtotalDiscount, total: discounts.finalTotal,
+        discount: discounts.subtotalDiscount, total: finalTotal,
         discountBreakdown: { bulk: discounts.bulkDiscount, delivery: discounts.deliveryDiscount, coupon: discounts.couponDiscount },
       })
     })
@@ -181,6 +185,15 @@ export default function CheckoutPage() {
                 </div>
               </label>
 
+              {/* Premium Gift Wrapping Option */}
+              <label style={{ display: 'flex', gap: '1rem', padding: '1rem 1.25rem', borderRadius: 'var(--radius-md)', cursor: 'pointer', border: `2px solid ${giftWrap ? 'var(--gold)' : 'var(--border)'}`, background: giftWrap ? 'rgba(201,169,110,0.08)' : 'var(--white)', transition: 'all 0.2s', alignItems: 'flex-start' }}>
+                <input type="checkbox" checked={giftWrap} onChange={e => setGiftWrap(e.target.checked)} style={{ marginTop: '4px' }} />
+                <div>
+                  <p style={{ fontWeight: 500, marginBottom: '0.2rem' }}>🎁 Premium Gift Wrapping (+৳150)</p>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Send as a gift! Beautifully wrapped in our signature Laay box with a personalized card.</p>
+                </div>
+              </label>
+
               {/* Coupon */}
               <div>
                 <label className="label">Coupon Code</label>
@@ -250,6 +263,7 @@ export default function CheckoutPage() {
                 ...(discounts.deliveryDiscount ? [{ label: `Advance delivery (${discounts.deliveryDiscount}%)`, value: `-৳${Math.round(discounts.subtotal * discounts.deliveryDiscount / 100).toLocaleString()}`, gold: true }] : []),
                 ...(discounts.couponDiscount ? [{ label: `Coupon (${couponCode})`, value: `-৳${Math.round(discounts.subtotal * discounts.couponDiscount / 100).toLocaleString()}`, gold: true }] : []),
                 { label: 'Delivery Fee', value: `৳${discounts.deliveryFee}` },
+                ...(giftWrap ? [{ label: 'Premium Gift Wrapping', value: '৳150' }] : []),
               ].map(row => (
                 <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>{row.label}</span>
@@ -258,7 +272,7 @@ export default function CheckoutPage() {
               ))}
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.75rem', marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem' }}>Total</span>
-                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', color: 'var(--gold)' }}>৳{discounts.finalTotal.toLocaleString()}</span>
+                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', color: 'var(--gold)' }}>৳{(discounts.finalTotal + (giftWrap ? 150 : 0)).toLocaleString()}</span>
               </div>
               {discounts.subtotalDiscount > 0 && (
                 <p style={{ fontSize: '0.75rem', color: 'var(--gold)', textAlign: 'right', marginTop: '0.25rem' }}>

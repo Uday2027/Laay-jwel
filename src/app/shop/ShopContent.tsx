@@ -86,7 +86,7 @@ export default function ShopContent({ initialProducts, initialCategory }: { init
           </div>
           <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, marginBottom: '0.5rem' }}>{catLabel}</h1>
           {hero && <p style={{ color: 'var(--text-muted)', fontSize: '0.87rem', fontStyle: 'italic' }}>{hero.desc}</p>}
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '0.5rem' }}>{sortedProducts.length} pieces</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '0.5rem' }}>{sortedProducts.length} designs</p>
         </div>
       </div>
 
@@ -110,7 +110,7 @@ export default function ShopContent({ initialProducts, initialCategory }: { init
             <div style={{ textAlign: 'center', padding: '5rem' }}><div className="spinner" style={{ margin: '0 auto' }} /></div>
           ) : sortedProducts.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '5rem' }}>
-              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', marginBottom: '0.5rem' }}>No pieces found</p>
+              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', marginBottom: '0.5rem' }}>No designs found</p>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Try a different category</p>
             </div>
           ) : (

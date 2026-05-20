@@ -44,7 +44,9 @@ export default function ProductDetailClient({
 }) {
   const [selectedImg, setSelectedImg] = useState(0)
   const [added, setAdded] = useState(false)
-  const { addToCart } = useApp()
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 })
+  const [showZoom, setShowZoom] = useState(false)
+  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp()
 
   const images = (() => { try { return JSON.parse(product.images) } catch { return ['/placeholder.jpg'] } })()
   if (images.length === 0) images.push('/placeholder.jpg')
@@ -59,19 +61,46 @@ export default function ProductDetailClient({
     setTimeout(() => setAdded(false), 2000)
   }
 
+  const isWish = isInWishlist(product.id)
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect()
+    const x = ((e.clientX - left) / width) * 100
+    const y = ((e.clientY - top) / height) * 100
+    setZoomPos({ x, y })
+  }
+
   return (
     <div style={{ paddingTop: 'var(--header-offset)' }}>
       <div className="container section">
         <div className="grid-2" style={{ gap: '4rem', alignItems: 'start' }}>
           {/* Images */}
           <div>
-            <div style={{ borderRadius: 'var(--radius-lg)', overflow: 'hidden', marginBottom: '1rem', background: 'var(--cream-dark)', aspectRatio: '4/5', position: 'relative' }}>
+            <div 
+              onMouseEnter={() => setShowZoom(true)}
+              onMouseLeave={() => setShowZoom(false)}
+              onMouseMove={handleMouseMove}
+              style={{ 
+                borderRadius: 'var(--radius-lg)', 
+                overflow: 'hidden', 
+                marginBottom: '1rem', 
+                background: 'var(--cream-dark)', 
+                aspectRatio: '4/5', 
+                position: 'relative',
+                cursor: 'zoom-in'
+              }}
+            >
               <Image
                 src={cloudinaryUrl(images[selectedImg], { width: 800 })}
                 alt={product.name}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                style={{ objectFit: 'cover' }}
+                style={{ 
+                  objectFit: 'cover',
+                  transform: showZoom ? 'scale(2.2)' : 'scale(1)',
+                  transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                  transition: showZoom ? 'none' : 'transform 0.3s ease-out'
+                }}
                 priority
                 onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/placeholder.jpg' }}
               />
@@ -132,9 +161,51 @@ export default function ProductDetailClient({
               </div>
             </div>
 
-            <button onClick={handleAddToCart} disabled={product.stock === 0} className={`btn btn-primary btn-lg btn-block ${added ? 'btn-gold' : ''}`} style={{ marginBottom: '1rem', transition: 'all 0.3s' }}>
-              {added ? '✓ Added to Cart!' : 'Add to Cart'}
-            </button>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+              <button 
+                onClick={handleAddToCart} 
+                disabled={product.stock === 0} 
+                className={`btn btn-primary btn-lg ${added ? 'btn-gold' : ''}`} 
+                style={{ flex: 1, transition: 'all 0.3s' }}
+              >
+                {added ? '✓ Added to Cart!' : 'Add to Cart'}
+              </button>
+              
+              <button
+                onClick={() => {
+                  if (isWish) {
+                    removeFromWishlist(product.id)
+                  } else {
+                    addToWishlist({
+                      productId: product.id,
+                      name: product.name,
+                      price: product.price,
+                      image: images[0],
+                      slug: product.slug,
+                      stock: product.stock
+                    })
+                  }
+                }}
+                className="btn btn-outline btn-lg"
+                style={{
+                  width: '54px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 0,
+                  color: isWish ? '#c0392b' : 'var(--text-secondary)',
+                  borderColor: isWish ? '#c0392b' : 'var(--border)',
+                  background: isWish ? 'rgba(192,57,43,0.05)' : 'none',
+                  transition: 'all 0.2s ease',
+                  flexShrink: 0
+                }}
+                aria-label={isWish ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill={isWish ? '#c0392b' : 'none'} stroke="currentColor" strokeWidth="1.5">
+                  <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>

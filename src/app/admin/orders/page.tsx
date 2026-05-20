@@ -5,6 +5,7 @@ interface Order {
   id: number; orderNumber: string; name: string; phone: string; status: string;
   total: number; paymentMethod: string; transactionId: string | null;
   createdAt: string; couponCode: string | null; discount: number; paidDelivery: boolean;
+  address: string; city: string; notes: string | null;
   items: Array<{ quantity: number; price: number; product: { name: string; slug: string; images: string } }>;
 }
 
@@ -89,10 +90,12 @@ export default function AdminOrders() {
             {[
               ['Customer', selected.name],
               ['Phone', selected.phone],
+              ['Address', `${selected.address}, ${selected.city}`],
               ['Payment', selected.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'],
               ...(selected.transactionId ? [['TrxID', selected.transactionId]] : []),
               ...(selected.couponCode ? [['Coupon', selected.couponCode]] : []),
               ['Discount', selected.discount ? `৳${selected.discount.toLocaleString()}` : '—'],
+              ...(selected.notes ? [['Notes', selected.notes]] : []),
             ].map(([k, v]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid var(--border-light)', fontSize: '0.85rem' }}>
                 <span style={{ color: 'var(--text-muted)' }}>{k}</span>

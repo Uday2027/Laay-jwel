@@ -34,6 +34,12 @@ export default function AdminCreateOrder() {
   const [loading, setLoading] = useState(false)
   const [placing, setPlacing] = useState(false)
 
+  // Manual override states
+  const [deliveryMode, setDeliveryMode] = useState<'auto' | 'free' | 'manual'>('auto')
+  const [manualDeliveryFee, setManualDeliveryFee] = useState(80)
+  const [discountMode, setDiscountMode] = useState<'auto' | 'manual' | 'none'>('auto')
+  const [manualDiscount, setManualDiscount] = useState(0)
+
   useEffect(() => {
     setLoading(true)
     fetch('/api/products?limit=200')
@@ -42,7 +48,12 @@ export default function AdminCreateOrder() {
       .finally(() => setLoading(false))
     fetch('/api/settings/public')
       .then(r => r.ok ? r.json() : null)
-      .then(d => { if (d?.deliveryFee) setDeliveryFee(d.deliveryFee) })
+      .then(d => { 
+        if (d?.deliveryFee) {
+          setDeliveryFee(d.deliveryFee)
+          setManualDeliveryFee(d.deliveryFee)
+        }
+      })
   }, [])
 
   const filteredProducts = products.filter(p =>
@@ -94,10 +105,41 @@ export default function AdminCreateOrder() {
     else { setCouponError(data.error); setCouponDiscount(0); setCouponApplied(false) }
   }
 
-  const discounts = calculateDiscounts({
-    items: selected, paidDelivery, couponDiscount,
-    couponCode: couponApplied ? couponCode : '', deliveryFee,
-  })
+  const subtotal = selected.reduce((sum, item) => sum + item.price * item.quantity, 0)
+
+  const finalDeliveryFee = (() => {
+    if (deliveryMode === 'free') return 0
+    if (deliveryMode === 'manual') return manualDeliveryFee
+    return deliveryFee
+  })()
+
+  const { finalDiscount, appliedDiscountBreakdown, discounts } = (() => {
+    const discounts = calculateDiscounts({
+      items: selected, paidDelivery, couponDiscount,
+      couponCode: couponApplied ? couponCode : '', deliveryFee: finalDeliveryFee,
+    })
+    
+    if (discountMode === 'none') {
+      return { finalDiscount: 0, appliedDiscountBreakdown: { none: true }, discounts }
+    }
+    if (discountMode === 'manual') {
+      const finalDisc = Math.min(subtotal, manualDiscount)
+      return { finalDiscount: finalDisc, appliedDiscountBreakdown: { manual: finalDisc }, discounts }
+    }
+    
+    // discountMode === 'auto'
+    return { 
+      finalDiscount: discounts.subtotalDiscount, 
+      appliedDiscountBreakdown: { 
+        bulk: discounts.bulkDiscount, 
+        delivery: discounts.deliveryDiscount, 
+        coupon: discounts.couponDiscount 
+      },
+      discounts
+    }
+  })()
+
+  const finalTotal = Math.max(0, subtotal - finalDiscount + finalDeliveryFee)
 
   const placeOrder = async () => {
     if (!form.name || !form.phone || !form.address || !form.city) { alert('Please fill all required fields'); return }
@@ -111,10 +153,13 @@ export default function AdminCreateOrder() {
         ...form,
         items: selected.map(i => ({ productId: i.productId, quantity: i.quantity, price: i.price })),
         paymentMethod, transactionId: transactionId || null,
-        couponCode: couponApplied ? couponCode : null, paidDelivery,
-        subtotal: discounts.subtotal, deliveryFee: discounts.deliveryFee,
-        discount: discounts.subtotalDiscount, total: discounts.finalTotal,
-        discountBreakdown: { bulk: discounts.bulkDiscount, delivery: discounts.deliveryDiscount, coupon: discounts.couponDiscount },
+        couponCode: discountMode === 'auto' && couponApplied ? couponCode : null, 
+        paidDelivery: discountMode === 'auto' ? paidDelivery : false,
+        subtotal, 
+        deliveryFee: finalDeliveryFee,
+        discount: finalDiscount, 
+        total: finalTotal,
+        discountBreakdown: appliedDiscountBreakdown,
       })
     })
     const data = await res.json()
@@ -225,16 +270,78 @@ export default function AdminCreateOrder() {
                 <input className="input" value={transactionId} onChange={e => setTransactionId(e.target.value)} />
               </div>
             )}
-            <label style={{ display: 'flex', gap: '0.75rem', padding: '0.75rem', borderRadius: 'var(--radius-sm)', cursor: 'pointer', border: `1px solid ${paidDelivery ? 'var(--gold)' : 'var(--border-light)'}`, background: paidDelivery ? 'rgba(201,169,110,0.06)' : 'transparent', marginTop: '0.75rem', alignItems: 'center' }}>
-              <input type="checkbox" checked={paidDelivery} onChange={e => setPaidDelivery(e.target.checked)} />
-              <span style={{ fontSize: '0.82rem' }}>Pay delivery fee in advance (5% discount)</span>
-            </label>
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-              <input className="input" value={couponCode} onChange={e => { setCouponCode(e.target.value.toUpperCase()); setCouponApplied(false); setCouponError('') }} placeholder="Coupon code" />
-              <button className="btn btn-outline-gold" onClick={applyCoupon}>Apply</button>
+          </div>
+
+          {/* Delivery & Discount Control */}
+          <div className="admin-card">
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, marginBottom: '1rem' }}>Delivery & Discount Settings</h3>
+            
+            {/* Delivery Control */}
+            <div style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--border-light)', paddingBottom: '1.5rem' }}>
+              <label className="label" style={{ fontWeight: 500, marginBottom: '0.5rem' }}>Delivery Fee Mode</label>
+              <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                {[
+                  { value: 'auto', label: `Automatic (৳${deliveryFee})` },
+                  { value: 'free', label: 'Free Delivery' },
+                  { value: 'manual', label: 'Manual/Custom' }
+                ].map(opt => (
+                  <label key={opt.value} style={{
+                    flex: 1, display: 'flex', gap: '0.4rem', padding: '0.5rem', borderRadius: 'var(--radius-sm)', cursor: 'pointer', border: `1px solid ${deliveryMode === opt.value ? 'var(--gold)' : 'var(--border-light)'}`, background: deliveryMode === opt.value ? 'rgba(201,169,110,0.06)' : 'transparent', alignItems: 'center'
+                  }}>
+                    <input type="radio" name="deliveryMode" value={opt.value} checked={deliveryMode === opt.value} onChange={() => setDeliveryMode(opt.value as any)} />
+                    <span style={{ fontSize: '0.78rem' }}>{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+              {deliveryMode === 'manual' && (
+                <div className="input-group">
+                  <label className="label">Custom Delivery Fee (৳)</label>
+                  <input type="number" min="0" className="input" value={manualDeliveryFee} onChange={e => setManualDeliveryFee(Number(e.target.value))} />
+                </div>
+              )}
             </div>
-            {couponApplied && <p style={{ fontSize: '0.78rem', color: 'var(--gold)', marginTop: '0.35rem' }}>✓ Coupon applied! {couponDiscount}% off</p>}
-            {couponError && <p className="error-msg" style={{ marginTop: '0.35rem' }}>{couponError}</p>}
+
+            {/* Discount Control */}
+            <div>
+              <label className="label" style={{ fontWeight: 500, marginBottom: '0.5rem' }}>Discount Mode</label>
+              <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                {[
+                  { value: 'auto', label: 'Automatic Rules' },
+                  { value: 'manual', label: 'Manual/Custom' },
+                  { value: 'none', label: 'No Discount' }
+                ].map(opt => (
+                  <label key={opt.value} style={{
+                    flex: 1, display: 'flex', gap: '0.4rem', padding: '0.5rem', borderRadius: 'var(--radius-sm)', cursor: 'pointer', border: `1px solid ${discountMode === opt.value ? 'var(--gold)' : 'var(--border-light)'}`, background: discountMode === opt.value ? 'rgba(201,169,110,0.06)' : 'transparent', alignItems: 'center'
+                  }}>
+                    <input type="radio" name="discountMode" value={opt.value} checked={discountMode === opt.value} onChange={() => setDiscountMode(opt.value as any)} />
+                    <span style={{ fontSize: '0.78rem' }}>{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+              
+              {discountMode === 'auto' && (
+                <div style={{ border: '1px solid var(--border-light)', padding: '0.75rem', borderRadius: 'var(--radius-sm)', background: 'var(--cream-light)' }}>
+                  <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Automatic discounts apply bulk (3+ items), coupon rules, or advance delivery discount.</p>
+                  <label style={{ display: 'flex', gap: '0.75rem', padding: '0.5rem 0', cursor: 'pointer', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <input type="checkbox" checked={paidDelivery} onChange={e => setPaidDelivery(e.target.checked)} />
+                    <span style={{ fontSize: '0.78rem' }}>Pay delivery fee in advance (5% discount)</span>
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    <input className="input" value={couponCode} onChange={e => { setCouponCode(e.target.value.toUpperCase()); setCouponApplied(false); setCouponError('') }} placeholder="Coupon code" />
+                    <button className="btn btn-outline-gold" onClick={applyCoupon}>Apply</button>
+                  </div>
+                  {couponApplied && <p style={{ fontSize: '0.78rem', color: 'var(--gold)', marginTop: '0.35rem' }}>✓ Coupon applied! {couponDiscount}% off</p>}
+                  {couponError && <p className="error-msg" style={{ marginTop: '0.35rem' }}>{couponError}</p>}
+                </div>
+              )}
+
+              {discountMode === 'manual' && (
+                <div className="input-group">
+                  <label className="label">Custom Discount Amount (৳)</label>
+                  <input type="number" min="0" max={subtotal} className="input" value={manualDiscount} onChange={e => setManualDiscount(Number(e.target.value))} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -260,11 +367,12 @@ export default function AdminCreateOrder() {
               ))}
               <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem', marginTop: '0.5rem' }}>
                 {[
-                  { label: 'Subtotal', value: `৳${discounts.subtotal.toLocaleString()}` },
-                  ...(discounts.bulkDiscount ? [{ label: `Bulk discount (${discounts.bulkDiscount}%)`, value: `-৳${Math.round(discounts.subtotal * discounts.bulkDiscount / 100).toLocaleString()}`, gold: true }] : []),
-                  ...(discounts.deliveryDiscount ? [{ label: `Advance delivery (${discounts.deliveryDiscount}%)`, value: `-৳${Math.round(discounts.subtotal * discounts.deliveryDiscount / 100).toLocaleString()}`, gold: true }] : []),
-                  ...(discounts.couponDiscount ? [{ label: `Coupon (${couponCode})`, value: `-৳${Math.round(discounts.subtotal * discounts.couponDiscount / 100).toLocaleString()}`, gold: true }] : []),
-                  { label: 'Delivery Fee', value: `৳${discounts.deliveryFee}` },
+                  { label: 'Subtotal', value: `৳${subtotal.toLocaleString()}` },
+                  ...(discountMode === 'auto' && discounts.bulkDiscount ? [{ label: `Bulk discount (${discounts.bulkDiscount}%)`, value: `-৳${Math.round(subtotal * discounts.bulkDiscount / 100).toLocaleString()}`, gold: true }] : []),
+                  ...(discountMode === 'auto' && discounts.deliveryDiscount ? [{ label: `Advance delivery (${discounts.deliveryDiscount}%)`, value: `-৳${Math.round(subtotal * discounts.deliveryDiscount / 100).toLocaleString()}`, gold: true }] : []),
+                  ...(discountMode === 'auto' && discounts.couponDiscount ? [{ label: `Coupon (${couponCode})`, value: `-৳${Math.round(subtotal * discounts.couponDiscount / 100).toLocaleString()}`, gold: true }] : []),
+                  ...(discountMode === 'manual' && finalDiscount > 0 ? [{ label: 'Manual discount', value: `-৳${finalDiscount.toLocaleString()}`, gold: true }] : []),
+                  { label: 'Delivery Fee', value: `৳${finalDeliveryFee.toLocaleString()}` },
                 ].map(row => (
                   <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>{row.label}</span>
@@ -273,7 +381,7 @@ export default function AdminCreateOrder() {
                 ))}
                 <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.75rem', marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ fontFamily: 'var(--font-serif)' }}>Total</span>
-                  <span style={{ fontFamily: 'var(--font-serif)', color: 'var(--gold)', fontWeight: 500 }}>৳{discounts.finalTotal.toLocaleString()}</span>
+                  <span style={{ fontFamily: 'var(--font-serif)', color: 'var(--gold)', fontWeight: 500 }}>৳{finalTotal.toLocaleString()}</span>
                 </div>
               </div>
               <button className="btn btn-gold btn-lg btn-block" style={{ marginTop: '1.5rem' }} onClick={placeOrder} disabled={placing || selected.length === 0}>
