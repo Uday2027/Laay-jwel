@@ -65,61 +65,61 @@ export default function HomeClient({ products }: { products: Product[] }) {
       
       tl.from('.hero-title-word', {
         opacity: 0,
-        y: 45,
-        duration: 1.2,
+        y: 30,
+        duration: 0.8,
         ease: 'power3.out',
       })
       
       tl.from('.hero-col-left', {
         opacity: 0,
-        x: -40,
-        duration: 1,
+        x: -30,
+        duration: 0.7,
         ease: 'power3.out',
-      }, '-=0.8')
+      }, '-=0.6')
       
       tl.from('.hero-col-right', {
         opacity: 0,
-        x: 40,
-        duration: 1,
+        x: 30,
+        duration: 0.7,
         ease: 'power3.out',
-      }, '-=1.0')
+      }, '-=0.7')
       
       tl.from('.hero-col-center', {
         opacity: 0,
-        y: 50,
-        duration: 1.1,
+        y: 35,
+        duration: 0.75,
         ease: 'power3.out',
-      }, '-=0.8')
+      }, '-=0.6')
       
       tl.from('.hero-tagline', {
         opacity: 0,
-        y: 20,
-        duration: 0.8,
+        y: 15,
+        duration: 0.5,
         ease: 'power2.out',
-      }, '-=0.5')
+      }, '-=0.4')
 
-      // Mobile hero animations
+      // Mobile hero animations (highly optimized, fast & snappy)
       tl.from('.hero-mobile-title', {
         opacity: 0,
-        y: 30,
-        duration: 1,
-        ease: 'power3.out',
+        y: 20,
+        duration: 0.6,
+        ease: 'power2.out',
       }, '0')
       
       tl.from('.hero-mobile-tagline', {
         opacity: 0,
-        y: 15,
-        duration: 0.8,
+        y: 10,
+        duration: 0.5,
         ease: 'power2.out',
-      }, '-=0.6')
+      }, '-=0.45')
       
       tl.from('.hero-mobile-grid-item', {
         opacity: 0,
-        y: 30,
-        duration: 0.8,
-        stagger: 0.12,
+        y: 20,
+        duration: 0.5,
+        stagger: 0.08,
         ease: 'power2.out',
-      }, '-=0.5')
+      }, '-=0.35')
 
       gsap.utils.toArray<HTMLElement>('.product-card-wrap').forEach((el, i) => {
         gsap.from(el, { y: 30, duration: 0.7, delay: (i % 3) * 0.1, ease: 'power2.out',
