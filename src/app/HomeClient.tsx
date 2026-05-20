@@ -60,7 +60,66 @@ export default function HomeClient({ products }: { products: Product[] }) {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Hero animations removed — image is clean with no overlays
+      // Hero entry animations
+      const tl = gsap.timeline()
+      
+      tl.from('.hero-title-word', {
+        opacity: 0,
+        y: 45,
+        duration: 1.2,
+        ease: 'power3.out',
+      })
+      
+      tl.from('.hero-col-left', {
+        opacity: 0,
+        x: -40,
+        duration: 1,
+        ease: 'power3.out',
+      }, '-=0.8')
+      
+      tl.from('.hero-col-right', {
+        opacity: 0,
+        x: 40,
+        duration: 1,
+        ease: 'power3.out',
+      }, '-=1.0')
+      
+      tl.from('.hero-col-center', {
+        opacity: 0,
+        y: 50,
+        duration: 1.1,
+        ease: 'power3.out',
+      }, '-=0.8')
+      
+      tl.from('.hero-tagline', {
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        ease: 'power2.out',
+      }, '-=0.5')
+
+      // Mobile hero animations
+      tl.from('.hero-mobile-title', {
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        ease: 'power3.out',
+      }, '0')
+      
+      tl.from('.hero-mobile-tagline', {
+        opacity: 0,
+        y: 15,
+        duration: 0.8,
+        ease: 'power2.out',
+      }, '-=0.6')
+      
+      tl.from('.hero-mobile-grid-item', {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        stagger: 0.12,
+        ease: 'power2.out',
+      }, '-=0.5')
 
       gsap.utils.toArray<HTMLElement>('.product-card-wrap').forEach((el, i) => {
         gsap.from(el, { y: 30, duration: 0.7, delay: (i % 3) * 0.1, ease: 'power2.out',
@@ -98,7 +157,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
         <div className="hidden-mobile" style={{ width: '100%', maxWidth: '1100px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
             {/* Left — Earrings */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} className="hero-col-left">
               <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1rem', color: '#7A6A5A', marginBottom: '0.5rem' }}>Earring</span>
               <Link href="/shop?category=EARRINGS" style={{ position: 'relative', aspectRatio: '1/1.2', width: '100%', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
                 <Image src="/Hero/earrings.png" alt="Earrings" fill priority sizes="33vw" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
@@ -107,17 +166,19 @@ export default function HomeClient({ products }: { products: Product[] }) {
 
             {/* Center — New Arrival + Bracelet */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, lineHeight: 1.05, color: '#7A6A5A', textAlign: 'center' }}>
+              <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, lineHeight: 1.05, color: '#7A6A5A', textAlign: 'center' }} className="hero-title-word">
                 <span style={{ display: 'block', fontFamily: 'var(--font-signature)', fontSize: '3.2rem', lineHeight: 1.1 }}>We Are Here</span>
               </h1>
-              <Link href="/shop?category=BRACELETS" style={{ marginTop: '1.5rem', position: 'relative', aspectRatio: '1.35/1', width: '100%', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
-                <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="40vw" style={{ objectFit: 'cover', objectPosition: 'center 25%', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
-              </Link>
-              <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1rem', color: '#7A6A5A', marginTop: '0.5rem' }}>Bracelet</span>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }} className="hero-col-center">
+                <Link href="/shop?category=BRACELETS" style={{ marginTop: '1.5rem', position: 'relative', aspectRatio: '1.35/1', width: '100%', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
+                  <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="40vw" style={{ objectFit: 'cover', objectPosition: 'center 25%', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+                </Link>
+                <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1rem', color: '#7A6A5A', marginTop: '0.5rem' }}>Bracelet</span>
+              </div>
             </div>
 
             {/* Right — Rings */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} className="hero-col-right">
               <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1rem', color: '#7A6A5A', marginBottom: '0.5rem' }}>Ring</span>
               <Link href="/shop?category=RINGS" style={{ position: 'relative', aspectRatio: '1/1.2', width: '100%', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
                 <Image src="/Hero/rings.png" alt="Rings" fill priority sizes="33vw" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
@@ -126,7 +187,7 @@ export default function HomeClient({ products }: { products: Product[] }) {
           </div>
 
           {/* Tagline */}
-          <p style={{ marginTop: '2.5rem', fontSize: '0.85rem', color: '#7A6A5A', letterSpacing: '0.1em', lineHeight: 1.7, textAlign: 'center' }}>
+          <p style={{ marginTop: '2.5rem', fontSize: '0.85rem', color: '#7A6A5A', letterSpacing: '0.1em', lineHeight: 1.7, textAlign: 'center' }} className="hero-tagline">
             Behind every compliment is a LAAY piece<br />
             Jewelry that starts conversations
           </p>
@@ -137,31 +198,30 @@ export default function HomeClient({ products }: { products: Product[] }) {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             {/* Header text */}
             <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
-            <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, lineHeight: 1.05, color: '#7A6A5A', marginBottom: '0.75rem' }}>
-              <span style={{ display: 'block', fontFamily: 'var(--font-signature)', fontSize: 'clamp(2.4rem, 7vw, 3.8rem)', lineHeight: 1.1 }}>We Are Here</span>
-            </h1>
-            <p style={{ fontSize: 'clamp(0.72rem, 1.8vw, 0.85rem)', color: '#7A6A5A', letterSpacing: '0.1em', lineHeight: 1.7 }}>
-              Behind every compliment is a LAAY piece<br />
-              Jewelry that starts conversations
-            </p>
-          </div>
+              <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, lineHeight: 1.05, color: '#7A6A5A', marginBottom: '0.75rem' }} className="hero-mobile-title">
+                <span style={{ display: 'block', fontFamily: 'var(--font-signature)', fontSize: 'clamp(2.4rem, 7vw, 3.8rem)', lineHeight: 1.1 }}>We Are Here</span>
+              </h1>
+              <p style={{ fontSize: 'clamp(0.72rem, 1.8vw, 0.85rem)', color: '#7A6A5A', letterSpacing: '0.1em', lineHeight: 1.7 }} className="hero-mobile-tagline">
+                Behind every compliment is a LAAY piece<br />
+                Jewelry that starts conversations
+              </p>
+            </div>
 
-          {/* Image grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', width: '100%' }}>
-            <Link href="/shop?category=EARRINGS" style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
-              <Image src="/Hero/earrings.png" alt="Earrings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
-              <span className="hero-tap-badge">Shop Earrings →</span>
-            </Link>
-            <Link href="/shop?category=RINGS" style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }}>
-              <Image src="/Hero/rings.png" alt="Rings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
-              <span className="hero-tap-badge">Shop Rings →</span>
-            </Link>
-            <Link href="/shop?category=BRACELETS" style={{ position: 'relative', aspectRatio: '2/1.1', overflow: 'hidden', borderRadius: '2px', gridColumn: '1 / -1', cursor: 'pointer' }}>
-              <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="(max-width: 520px) 100vw, 520px" style={{ objectFit: 'cover', objectPosition: 'center 25%', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
-              <span className="hero-tap-badge">Shop Bracelets →</span>
-            </Link>
-          </div>
-
+            {/* Image grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', width: '100%' }}>
+              <Link href="/shop?category=EARRINGS" style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }} className="hero-mobile-grid-item">
+                <Image src="/Hero/earrings.png" alt="Earrings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+                <span className="hero-tap-badge">Shop Earrings →</span>
+              </Link>
+              <Link href="/shop?category=RINGS" style={{ position: 'relative', aspectRatio: '1/1.25', overflow: 'hidden', borderRadius: '2px', cursor: 'pointer' }} className="hero-mobile-grid-item">
+                <Image src="/Hero/rings.png" alt="Rings" fill priority sizes="(max-width: 520px) 50vw, 260px" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+                <span className="hero-tap-badge">Shop Rings →</span>
+              </Link>
+              <Link href="/shop?category=BRACELETS" style={{ position: 'relative', aspectRatio: '2/1.1', overflow: 'hidden', borderRadius: '2px', gridColumn: '1 / -1', cursor: 'pointer' }} className="hero-mobile-grid-item">
+                <Image src="/Hero/bracelet.png" alt="Bracelet" fill priority sizes="(max-width: 520px) 100vw, 520px" style={{ objectFit: 'cover', objectPosition: 'center 25%', transition: 'transform 0.4s ease' }} className="hero-img-hover" />
+                <span className="hero-tap-badge">Shop Bracelets →</span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

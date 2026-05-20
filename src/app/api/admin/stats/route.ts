@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     totalOrders,
     pendingOrders,
     totalCustomers,
-    totalProducts,
+    totalProductsResult,
     lowStockProductsRaw,
     outOfStockProducts,
     totalReviews
@@ -24,7 +24,7 @@ export async function GET(req: Request) {
     Order.countDocuments(),
     Order.countDocuments({ status: 'PENDING' }),
     User.countDocuments({ role: 'CUSTOMER' }),
-    Product.countDocuments(),
+    Product.aggregate([{ $group: { _id: null, total: { $sum: '$stock' } } }]),
     Product.find({ stock: { $gt: 0, $lte: 3 } })
       .sort({ stock: 1 })
       .limit(5)
@@ -33,6 +33,8 @@ export async function GET(req: Request) {
     Product.countDocuments({ stock: 0 }),
     Review.countDocuments(),
   ])
+
+  const totalProducts = totalProductsResult[0]?.total || 0
 
   const lowStockProducts = lowStockProductsRaw.map((p: any) => ({
     id: p._id,
