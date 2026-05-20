@@ -7,7 +7,8 @@ import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/cart/CartDrawer'
 import AnnouncementBanner from '@/components/layout/AnnouncementBanner'
 import NavigationLoader from '@/components/layout/NavigationLoader'
-import { prisma } from '@/lib/prisma'
+import { connectDB } from '@/lib/db'
+import Settings from '@/models/Settings'
 import { getAuthUser } from '@/lib/auth'
 import { Cormorant_Garamond, Jost, Great_Vibes } from 'next/font/google'
 
@@ -46,9 +47,10 @@ export const metadata: Metadata = {
 
 async function getLayoutData() {
   try {
+    await connectDB()
     const [user, settings] = await Promise.all([
       getAuthUser().catch(() => null),
-      prisma.settings.findUnique({ where: { id: 1 } }).catch(() => null),
+      Settings.findOne({ _id: 1 }).lean().catch(() => null),
     ])
     return {
       user: user ? { id: user.userId, name: user.name, email: user.email, role: user.role } : null,
@@ -65,6 +67,7 @@ async function getLayoutData() {
     }
   }
 }
+
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const data = await getLayoutData()

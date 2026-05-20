@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { connectDB } from '@/lib/db'
+import Settings from '@/models/Settings'
 
 export async function GET() {
-  const settings = await prisma.settings.findUnique({ where: { id: 1 } })
+  await connectDB()
+  const settings = await Settings.findById(1).lean()
   if (!settings) return NextResponse.json({ deliveryFee: 80, bannerText: '', bannerActive: false })
   return NextResponse.json({
     deliveryFee: settings.deliveryFee,
@@ -17,3 +19,4 @@ export async function GET() {
     storePhone: settings.storePhone,
   })
 }
+

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { connectDB } from '@/lib/db'
+import Review from '@/models/Review'
+import Product from '@/models/Product'
 import { getAuthUserFromRequest, isAdmin } from '@/lib/auth'
 
 export async function GET(req: Request) {
@@ -11,15 +13,30 @@ export async function GET(req: Request) {
   const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get('pageSize') || '50')))
   const skip = (page - 1) * pageSize
 
-  const [reviews, total] = await Promise.all([
-    prisma.review.findMany({
-      include: { product: { select: { id: true, name: true, slug: true, images: true } } },
-      orderBy: { createdAt: 'desc' },
-      skip,
-      take: pageSize,
-    }),
-    prisma.review.count(),
+  await connectDB()
+
+  const [reviewsRaw, total] = await Promise.all([
+    Review.find()
+      .populate('productId', 'name slug images')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(pageSize)
+      .lean(),
+    Review.countDocuments()
   ])
+
+  const reviews = reviewsRaw.map((r: any) => {
+    const prod = r.productId
+    return {
+      id: r._id,
+      name: r.name,
+      email: r.email,
+      rating: r.rating,
+      comment: r.comment,
+      createdAt: r.createdAt,
+      product: prod ? { id: prod._id, name: prod.name, slug: prod.slug, images: prod.images } : null
+    }
+  })
 
   return NextResponse.json({ reviews, total, page, pageSize })
 }
@@ -32,6 +49,8 @@ export async function DELETE(req: Request) {
   const id = parseInt(searchParams.get('id') || '')
   if (isNaN(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
 
-  await prisma.review.delete({ where: { id } })
+  await connectDB()
+  await Review.deleteOne({ _id: id })
   return NextResponse.json({ message: 'Deleted' })
 }
+

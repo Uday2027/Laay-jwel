@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { connectDB, getNextSequence } from '@/lib/db'
+import Order from '@/models/Order'
+import Product from '@/models/Product'
+import User from '@/models/User'
+import Coupon from '@/models/Coupon'
 import { generateOrderNumber } from '@/lib/discount'
 import { getAuthUserFromRequest, isAdmin } from '@/lib/auth'
 
@@ -14,33 +18,62 @@ export async function GET(req: Request) {
   const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get('pageSize') || '50')))
   const skip = (page - 1) * pageSize
 
-  const where = {
-    ...(search ? {
-      OR: [
-        { orderNumber: { contains: search } },
-        { phone: { contains: search } },
-        { transactionId: { contains: search } },
-        { name: { contains: search } },
-      ]
-    } : {}),
-    ...(status ? { status } : {}),
+  await connectDB()
+
+  const query: any = {}
+  if (search) {
+    query.$or = [
+      { orderNumber: { $regex: search, $options: 'i' } },
+      { phone: { $regex: search, $options: 'i' } },
+      { transactionId: { $regex: search, $options: 'i' } },
+      { name: { $regex: search, $options: 'i' } }
+    ]
+  }
+  if (status) {
+    query.status = status
   }
 
-  const [orders, total] = await Promise.all([
-    prisma.order.findMany({
-      where,
-      include: {
-        items: {
-          select: { id: true, quantity: true, price: true, productId: true, product: { select: { id: true, name: true, slug: true, images: true } } }
-        },
-        user: { select: { name: true, email: true } }
-      },
-      orderBy: { createdAt: 'desc' },
-      skip,
-      take: pageSize,
-    }),
-    prisma.order.count({ where }),
+  const [ordersRaw, total] = await Promise.all([
+    Order.find(query)
+      .populate({
+        path: 'items.productId',
+        select: 'name slug images',
+        model: Product
+      })
+      .populate({
+        path: 'userId',
+        select: 'name email',
+        model: User
+      })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(pageSize)
+      .lean(),
+    Order.countDocuments(query),
   ])
+
+  const orders = ordersRaw.map((o: any) => {
+    return {
+      ...o,
+      id: o._id,
+      user: o.userId ? { name: o.userId.name, email: o.userId.email } : null,
+      items: (o.items || []).map((item: any, idx: number) => {
+        const prod = item.productId
+        return {
+          id: idx + 1,
+          productId: prod ? prod._id : item.productId,
+          quantity: item.quantity,
+          price: item.price,
+          product: prod ? {
+            id: prod._id,
+            name: prod.name,
+            slug: prod.slug,
+            images: JSON.stringify(prod.images || [])
+          } : null
+        }
+      })
+    }
+  })
 
   return NextResponse.json({ orders, total, page, pageSize })
 }
@@ -48,26 +81,23 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const body = await req.json()
   const authUser = await getAuthUserFromRequest(req)
-  const admin = isAdmin(authUser)
-
   const { name, phone, address, city, notes, items, paymentMethod, transactionId, couponCode, paidDelivery, subtotal, deliveryFee, discount, total } = body
 
   if (!name || !phone || !address || !items?.length) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
+  await connectDB()
+
   // Validate stock for each item
   const productIds = items.map((item: { productId: number }) => item.productId)
-  const products = await prisma.product.findMany({
-    where: { id: { in: productIds } },
-    select: { id: true, stock: true, name: true }
-  })
+  const products = await Product.find({ _id: { $in: productIds } }).lean()
 
-  const stockMap = new Map(products.map(p => [p.id, p]))
+  const stockMap = new Map(products.map((p: any) => [p._id, p]))
   const stockErrors: string[] = []
 
   for (const item of items as { productId: number; quantity: number }[]) {
-    const product = stockMap.get(item.productId)
+    const product: any = stockMap.get(item.productId)
     if (!product) {
       stockErrors.push(`Product #${item.productId} not found`)
     } else if (product.stock < item.quantity) {
@@ -81,51 +111,61 @@ export async function POST(req: Request) {
 
   const orderNumber = generateOrderNumber()
 
-  // Use transaction to create order and decrement stock atomically
-  const order = await prisma.$transaction(async (tx) => {
-    // Decrement stock
-    for (const item of items as { productId: number; quantity: number }[]) {
-      await tx.product.update({
-        where: { id: item.productId },
-        data: { stock: { decrement: item.quantity } }
-      })
-    }
+  // Decrement stock
+  for (const item of items as { productId: number; quantity: number }[]) {
+    await Product.updateOne(
+      { _id: item.productId },
+      { $inc: { stock: -item.quantity } }
+    )
+  }
 
-    // Create order
-    return tx.order.create({
-      data: {
-        orderNumber, name, phone, address, city, notes: notes || '',
-        userId: authUser?.userId || null,
-        status: 'PENDING',
-        items: {
-          create: items.map((item: { productId: number; quantity: number; price: number }) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            price: item.price,
-          }))
-        },
-        subtotal, deliveryFee, discount: discount || 0, total,
-        paymentMethod: paymentMethod || 'cod',
-        transactionId: transactionId || null,
-        couponCode: couponCode || null,
-        paidDelivery: paidDelivery || false,
-        discountBreakdown: JSON.stringify(body.discountBreakdown || {}),
-      },
-      include: { items: true }
-    })
+  // Create order
+  const nextOrderId = await getNextSequence('Order')
+  const orderDoc = await Order.create({
+    _id: nextOrderId,
+    orderNumber,
+    userId: authUser?.userId || null,
+    name,
+    phone,
+    address,
+    city,
+    notes: notes || '',
+    status: 'PENDING',
+    items: items.map((item: { productId: number; quantity: number; price: number }) => ({
+      productId: item.productId,
+      quantity: item.quantity,
+      price: item.price,
+    })),
+    subtotal,
+    deliveryFee,
+    discount: discount || 0,
+    total,
+    paymentMethod: paymentMethod || 'cod',
+    transactionId: transactionId || null,
+    couponCode: couponCode || null,
+    paidDelivery: paidDelivery || false,
+    discountBreakdown: body.discountBreakdown || {},
   })
 
   // Update coupon stats if used
   if (couponCode) {
-    await prisma.coupon.updateMany({
-      where: { code: couponCode },
-      data: {
-        usageCount: { increment: 1 },
-        totalRevenue: { increment: total },
-        totalSaved: { increment: discount || 0 },
+    await Coupon.updateMany(
+      { code: couponCode },
+      {
+        $inc: {
+          usageCount: 1,
+          totalRevenue: total,
+          totalSaved: discount || 0,
+        }
       }
-    }).catch(() => {})
+    ).catch(() => {})
+  }
+
+  const order = {
+    ...orderDoc.toObject(),
+    id: orderDoc._id
   }
 
   return NextResponse.json({ order, orderNumber }, { status: 201 })
 }
+

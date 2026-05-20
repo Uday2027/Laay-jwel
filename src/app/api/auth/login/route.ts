@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { prisma } from '@/lib/prisma'
+import { connectDB } from '@/lib/db'
+import User from '@/models/User'
 import { signToken, AUTH_COOKIE } from '@/lib/auth'
 
 export async function POST(req: Request) {
@@ -8,15 +9,16 @@ export async function POST(req: Request) {
     const { email, password } = await req.json()
     if (!email || !password) return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
 
-    const user = await prisma.user.findUnique({ where: { email } })
+    await connectDB()
+    const user = await User.findOne({ email }).lean()
     if (!user) return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
 
     const valid = await bcrypt.compare(password, user.password)
     if (!valid) return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
 
-    const token = signToken({ userId: user.id, email: user.email, role: user.role, name: user.name })
+    const token = signToken({ userId: user._id, email: user.email, role: user.role, name: user.name })
 
-    const res = NextResponse.json({ user: { id: user.id, name: user.name, email: user.email, role: user.role } })
+    const res = NextResponse.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role } })
     res.cookies.set(AUTH_COOKIE, token, { httpOnly: true, maxAge: 60 * 60 * 24 * 7, path: '/', sameSite: 'lax' })
     return res
   } catch (e) {
@@ -24,3 +26,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
+

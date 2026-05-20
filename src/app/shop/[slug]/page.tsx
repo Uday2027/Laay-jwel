@@ -1,4 +1,6 @@
-import { prisma } from '@/lib/prisma'
+import { connectDB } from '@/lib/db'
+import Product from '@/models/Product'
+import Review from '@/models/Review'
 import { notFound } from 'next/navigation'
 import { getAuthUser } from '@/lib/auth'
 import ProductDetailClient from './ProductDetailClient'
@@ -6,27 +8,48 @@ import ProductDetailClient from './ProductDetailClient'
 export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
 
-  const [product, authUser] = await Promise.all([
-    prisma.product.findUnique({ where: { slug } }),
+  await connectDB()
+  const [productRaw, authUser] = await Promise.all([
+    Product.findOne({ slug }).lean(),
     getAuthUser().catch(() => null),
   ])
 
-  if (!product) notFound()
+  if (!productRaw) notFound()
 
-  const [related, reviews] = await Promise.all([
-    prisma.product.findMany({
-      where: { category: product.category, id: { not: product.id } },
-      take: 4,
-      orderBy: { createdAt: 'desc' },
-      select: { id: true, name: true, slug: true, price: true, images: true, category: true, featured: true, stock: true },
-    }),
-    prisma.review.findMany({
-      where: { productId: product.id },
-      orderBy: { createdAt: 'desc' },
-    }),
+  const product = {
+    ...productRaw,
+    id: productRaw._id,
+    images: JSON.stringify(productRaw.images || [])
+  }
+
+  const [relatedRaw, reviewsRaw] = await Promise.all([
+    Product.find({ category: product.category, _id: { $ne: product.id } })
+      .sort({ createdAt: -1 })
+      .limit(4)
+      .lean(),
+    Review.find({ productId: product.id })
+      .sort({ createdAt: -1 })
+      .lean()
   ])
+
+  const related = relatedRaw.map((p: any) => ({
+    id: p._id,
+    name: p.name,
+    slug: p.slug,
+    price: p.price,
+    images: JSON.stringify(p.images || []),
+    category: p.category,
+    featured: p.featured,
+    stock: p.stock
+  }))
+
+  const reviews = reviewsRaw.map((r: any) => ({
+    ...r,
+    id: r._id
+  }))
 
   const isAdmin = authUser?.role === 'ADMIN'
 
-  return <ProductDetailClient product={product} related={related} reviews={reviews} isAdmin={isAdmin} />
+  return <ProductDetailClient product={product as any} related={related as any} reviews={reviews as any} isAdmin={isAdmin} />
 }
+

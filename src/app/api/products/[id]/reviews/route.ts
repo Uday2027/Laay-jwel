@@ -1,23 +1,31 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { connectDB, getNextSequence } from '@/lib/db'
+import Review from '@/models/Review'
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const productId = parseInt(id)
   if (isNaN(productId)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
 
-  const reviews = await prisma.review.findMany({
-    where: { productId },
-    orderBy: { createdAt: 'desc' },
-  })
+  await connectDB()
+  const rawReviews = await Review.find({ productId }).sort({ createdAt: -1 }).lean()
+  const reviews = rawReviews.map((r: any) => ({ ...r, id: r._id }))
 
-  const avg = await prisma.review.aggregate({
-    where: { productId },
-    _avg: { rating: true },
-    _count: { rating: true },
-  })
+  const agg = await Review.aggregate([
+    { $match: { productId } },
+    {
+      $group: {
+        _id: null,
+        avgRating: { $avg: '$rating' },
+        count: { $sum: 1 }
+      }
+    }
+  ])
 
-  return NextResponse.json({ reviews, average: avg._avg.rating || 0, count: avg._count.rating })
+  const average = agg[0]?.avgRating || 0
+  const count = agg[0]?.count || 0
+
+  return NextResponse.json({ reviews, average, count })
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -35,9 +43,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ error: 'Rating must be between 1 and 5' }, { status: 400 })
   }
 
-  const review = await prisma.review.create({
-    data: { productId, name, email: email || null, rating: parseInt(rating), comment },
+  await connectDB()
+  const nextId = await getNextSequence('Review')
+  const review = await Review.create({
+    _id: nextId,
+    productId,
+    name,
+    email: email || null,
+    rating: parseInt(rating),
+    comment
   })
 
-  return NextResponse.json({ review }, { status: 201 })
+  const mappedReview = { ...review.toObject(), id: review._id }
+  return NextResponse.json({ review: mappedReview }, { status: 201 })
 }
+

@@ -1,13 +1,25 @@
-import { prisma } from '@/lib/prisma'
+import { connectDB } from '@/lib/db'
+import Product from '@/models/Product'
 import HomeClient from './HomeClient'
 
 export default async function HomePage() {
-  const products = await prisma.product.findMany({
-    where: { featured: true },
-    take: 12,
-    orderBy: { createdAt: 'desc' },
-    select: { id: true, name: true, slug: true, price: true, images: true, category: true, featured: true, stock: true },
-  })
+  await connectDB()
+  const rawProducts = await Product.find({ featured: true })
+    .sort({ createdAt: -1 })
+    .limit(12)
+    .lean()
 
-  return <HomeClient products={products} />
+  const products = rawProducts.map((p: any) => ({
+    id: p._id,
+    name: p.name,
+    slug: p.slug,
+    price: p.price,
+    images: JSON.stringify(p.images || []),
+    category: p.category,
+    featured: p.featured,
+    stock: p.stock
+  }))
+
+  return <HomeClient products={products as any} />
 }
+

@@ -1,14 +1,26 @@
-import { prisma } from '@/lib/prisma'
+import { connectDB } from '@/lib/db'
+import Product from '@/models/Product'
 import ShopContent from './ShopContent'
 
 export default async function ShopPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
   const { category: catParam } = await searchParams
   const category = (catParam || 'ALL').trim().toUpperCase()
 
-  const products = await prisma.product.findMany({
-    orderBy: { createdAt: 'desc' },
-    select: { id: true, name: true, slug: true, price: true, images: true, category: true, featured: true, stock: true, createdAt: true },
-  })
+  await connectDB()
+  const rawProducts = await Product.find().sort({ createdAt: -1 }).lean()
 
-  return <ShopContent initialProducts={products} initialCategory={category} />
+  const products = rawProducts.map((p: any) => ({
+    id: p._id,
+    name: p.name,
+    slug: p.slug,
+    price: p.price,
+    images: JSON.stringify(p.images || []),
+    category: p.category,
+    featured: p.featured,
+    stock: p.stock,
+    createdAt: p.createdAt
+  }))
+
+  return <ShopContent initialProducts={products as any} initialCategory={category} />
 }
+
