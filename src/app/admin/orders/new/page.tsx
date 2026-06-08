@@ -346,7 +346,7 @@ export default function AdminCreateOrder() {
         </div>
 
         {/* Right: Summary */}
-        <div className="admin-card" style={{ position: 'sticky', top: '2rem' }}>
+        <div className="admin-card admin-detail-panel" style={{ position: 'sticky', top: '2rem' }}>
           <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, marginBottom: '1.25rem' }}>Order Summary</h3>
           {selected.length === 0 ? (
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '2rem 0' }}>No products selected</p>

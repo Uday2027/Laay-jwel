@@ -12,6 +12,13 @@ interface Stats {
   totalReviews: number
   recentOrders: Array<{ id: number; orderNumber: string; name: string; total: number; status: string; createdAt: string }>
   lowStockProducts: Array<{ id: number; name: string; slug: string; stock: number; images: string }>
+  analytics: {
+    visitorsToday: number
+    pageviewsToday: number
+    totalAddToCartWeek: number
+    topProductClicks: Array<{ _id: number; name: string; slug: string; count: number }>
+    topAddToCart: Array<{ _id: number; name: string; slug: string; count: number }>
+  }
 }
 
 const STATUS_COLORS: Record<string, string> = { PENDING: 'badge-orange', PROCESSING: 'badge-blue', SHIPPED: 'badge-blue', DELIVERED: 'badge-green', CANCELLED: 'badge-red' }
@@ -31,6 +38,13 @@ export default function AdminDashboard() {
     { label: 'Total Customers', value: stats.totalCustomers, icon: '👥', color: '#1d4ed8' },
   ]
 
+  const ANALYTICS_CARDS = [
+    { label: 'Visitors Today', value: stats.analytics?.visitorsToday ?? 0, icon: '👁️', color: '#7c3aed' },
+    { label: 'Page Views Today', value: stats.analytics?.pageviewsToday ?? 0, icon: '📄', color: '#0891b2' },
+    { label: 'Add to Cart (7d)', value: stats.analytics?.totalAddToCartWeek ?? 0, icon: '🛒', color: '#ea580c' },
+    { label: 'Total Reviews', value: stats.totalReviews, icon: '⭐', color: '#ca8a04' },
+  ]
+
   return (
     <div>
       <div style={{ marginBottom: '2.5rem' }}>
@@ -45,8 +59,8 @@ export default function AdminDashboard() {
         <button className="btn btn-outline btn-sm" onClick={() => router.push('/admin/coupons')}>+ Add Coupon</button>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid-4" style={{ marginBottom: '2.5rem' }}>
+      {/* Main stat cards */}
+      <div className="grid-4" style={{ marginBottom: '1.5rem' }}>
         {STAT_CARDS.map(card => (
           <div key={card.label} className="admin-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -55,6 +69,21 @@ export default function AdminDashboard() {
                 <div className="admin-stat-label">{card.label}</div>
               </div>
               <span style={{ fontSize: '1.75rem' }}>{card.icon}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Analytics cards */}
+      <div className="grid-4" style={{ marginBottom: '2.5rem' }}>
+        {ANALYTICS_CARDS.map(card => (
+          <div key={card.label} className="admin-card" style={{ background: 'var(--cream)', border: '1px solid var(--border-light)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div className="admin-stat">
+                <div className="admin-stat-value" style={{ color: card.color, fontSize: '2rem' }}>{card.value}</div>
+                <div className="admin-stat-label">{card.label}</div>
+              </div>
+              <span style={{ fontSize: '1.5rem' }}>{card.icon}</span>
             </div>
           </div>
         ))}
@@ -109,6 +138,49 @@ export default function AdminDashboard() {
               </button>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Analytics Tables */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2.5rem' }}>
+        {/* Top Product Clicks */}
+        <div className="admin-card">
+          <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '1.1rem', marginBottom: '1.25rem' }}>🔥 Most Viewed Products (7d)</h3>
+          {stats.analytics?.topProductClicks?.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {stats.analytics.topProductClicks.map((p, idx) => (
+                <div key={p._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.6rem 0', borderBottom: '1px solid var(--border-light)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', width: 20 }}>{idx + 1}.</span>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--charcoal)' }}>{p.name}</span>
+                  </div>
+                  <span className="badge badge-blue" style={{ fontSize: '0.6rem' }}>{p.count} clicks</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '1rem' }}>No product view data yet</p>
+          )}
+        </div>
+
+        {/* Top Add to Cart */}
+        <div className="admin-card">
+          <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '1.1rem', marginBottom: '1.25rem' }}>🛒 Most Added to Cart (7d)</h3>
+          {stats.analytics?.topAddToCart?.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {stats.analytics.topAddToCart.map((p, idx) => (
+                <div key={p._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.6rem 0', borderBottom: '1px solid var(--border-light)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', width: 20 }}>{idx + 1}.</span>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--charcoal)' }}>{p.name}</span>
+                  </div>
+                  <span className="badge badge-orange" style={{ fontSize: '0.6rem' }}>{p.count} adds</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '1rem' }}>No add-to-cart data yet</p>
+          )}
         </div>
       </div>
 

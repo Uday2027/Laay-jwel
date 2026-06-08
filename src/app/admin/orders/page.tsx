@@ -75,7 +75,7 @@ export default function AdminOrders() {
       </div>
 
       {/* Search & Filters */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+      <div className="admin-filter-bar" style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         <input className="input" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by order#, phone, or TrxID..." style={{ flex: 1, minWidth: '260px' }} />
         <select className="input" value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ width: 'auto' }}>
           <option value="">All Statuses</option>
@@ -118,7 +118,7 @@ export default function AdminOrders() {
 
         {/* Detail panel */}
         {selected && (
-          <div className="admin-card" style={{ position: 'sticky', top: '2rem' }}>
+          <div className="admin-card admin-detail-panel" style={{ position: 'sticky', top: '2rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
               <div>
                 <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--gold)', fontSize: '1.1rem' }}>{selected.orderNumber}</p>

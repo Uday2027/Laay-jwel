@@ -1,9 +1,10 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useApp } from '@/lib/context'
 import Image from 'next/image'
 import { cloudinaryUrl } from '@/lib/images'
+import { trackProductClick } from '@/lib/analytics'
 
 interface Product {
   id: number; name: string; slug: string; price: number; description: string;
@@ -47,6 +48,11 @@ export default function ProductDetailClient({
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 })
   const [showZoom, setShowZoom] = useState(false)
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp()
+
+  // Track product page view
+  useEffect(() => {
+    trackProductClick(product.id, product.name, product.slug)
+  }, [product.id, product.name, product.slug])
 
   const images = (() => { try { return JSON.parse(product.images) } catch { return ['/placeholder.jpg'] } })()
   if (images.length === 0) images.push('/placeholder.jpg')

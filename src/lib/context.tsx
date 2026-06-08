@@ -1,5 +1,6 @@
 'use client'
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { trackAddToCart } from './analytics'
 
 interface CartItem {
   productId: number
@@ -108,12 +109,16 @@ export function AppProvider({
           alert(`Only ${existing.stock} item(s) available in stock`)
           return prev
         }
+        // Track add to cart (incrementing existing item)
+        trackAddToCart(item.productId, item.name, item.slug, 1)
         return prev.map(i => i.productId === item.productId ? { ...i, quantity: newQty } : i)
       }
       if (item.stock <= 0) {
         alert('This item is out of stock')
         return prev
       }
+      // Track add to cart (new item)
+      trackAddToCart(item.productId, item.name, item.slug, 1)
       return [...prev, { ...item, quantity: 1 }]
     })
     setCartOpen(true)

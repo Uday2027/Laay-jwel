@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/cart/CartDrawer'
 import AnnouncementBanner from '@/components/layout/AnnouncementBanner'
 import NavigationLoader from '@/components/layout/NavigationLoader'
+import AnalyticsTracker from '@/components/AnalyticsTracker'
 import { connectDB } from '@/lib/db'
 import Settings from '@/models/Settings'
 import { getAuthUser } from '@/lib/auth'
@@ -85,6 +86,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <NavigationLoader />
         </Suspense>
         <AppProvider initialUser={data.user} initialDeliveryFee={data.deliveryFee}>
+          <AnalyticsTracker />
           <div id="global-banner"><AnnouncementBanner text={data.bannerText} active={data.bannerActive} /></div>
           <div id="global-navbar"><Navbar /></div>
           <main id="global-main">{children}</main>
