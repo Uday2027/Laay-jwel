@@ -92,6 +92,12 @@ export async function GET(req: Request) {
     { $limit: 5 },
   ])
 
+  // Lifetime analytics
+  const lifetimeVisitors = await AnalyticsEvent.distinct('sessionId', { type: 'pageview' })
+  const lifetimePageViews = await AnalyticsEvent.countDocuments({ type: 'pageview' })
+  const lifetimeProductClicks = await AnalyticsEvent.countDocuments({ type: 'product_click' })
+  const lifetimeAddToCart = await AnalyticsEvent.countDocuments({ type: 'add_to_cart' })
+
   return NextResponse.json({
     totalOrders,
     pendingOrders,
@@ -108,6 +114,12 @@ export async function GET(req: Request) {
       totalAddToCartWeek,
       topProductClicks,
       topAddToCart,
+      lifetime: {
+        visitors: lifetimeVisitors.length,
+        pageViews: lifetimePageViews,
+        productClicks: lifetimeProductClicks,
+        addToCart: lifetimeAddToCart,
+      },
     },
   })
 }

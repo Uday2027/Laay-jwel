@@ -173,12 +173,12 @@ export default function AdminCreateOrder() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div className="admin-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '2rem' }}>Create Order</h1>
         <button className="btn btn-outline btn-sm" onClick={() => router.push('/admin/orders')}>← Back to Orders</button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '1.5rem', alignItems: 'start' }}>
+      <div className="admin-grid-sidepanel" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '1.5rem', alignItems: 'start' }}>
         {/* Left */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {/* Product Selector */}
@@ -224,7 +224,7 @@ export default function AdminCreateOrder() {
           {/* Customer Info */}
           <div className="admin-card">
             <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, marginBottom: '1rem' }}>Customer Information</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="admin-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div className="input-group">
                 <label className="label">Full Name *</label>
                 <input className="input" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
@@ -251,7 +251,7 @@ export default function AdminCreateOrder() {
           {/* Payment */}
           <div className="admin-card">
             <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, marginBottom: '1rem' }}>Payment</h3>
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+            <div className="admin-flex-wrap" style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
               {[
                 { value: 'cod', label: 'Cash on Delivery' },
                 { value: 'online', label: 'Online Payment' },
@@ -279,7 +279,7 @@ export default function AdminCreateOrder() {
             {/* Delivery Control */}
             <div style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--border-light)', paddingBottom: '1.5rem' }}>
               <label className="label" style={{ fontWeight: 500, marginBottom: '0.5rem' }}>Delivery Fee Mode</label>
-              <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.75rem' }}>
+              <div className="admin-flex-wrap" style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.75rem' }}>
                 {[
                   { value: 'auto', label: `Automatic (৳${deliveryFee})` },
                   { value: 'free', label: 'Free Delivery' },
@@ -304,7 +304,7 @@ export default function AdminCreateOrder() {
             {/* Discount Control */}
             <div>
               <label className="label" style={{ fontWeight: 500, marginBottom: '0.5rem' }}>Discount Mode</label>
-              <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.75rem' }}>
+              <div className="admin-flex-wrap" style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.75rem' }}>
                 {[
                   { value: 'auto', label: 'Automatic Rules' },
                   { value: 'manual', label: 'Manual/Custom' },

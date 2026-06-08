@@ -18,6 +18,12 @@ interface Stats {
     totalAddToCartWeek: number
     topProductClicks: Array<{ _id: number; name: string; slug: string; count: number }>
     topAddToCart: Array<{ _id: number; name: string; slug: string; count: number }>
+    lifetime: {
+      visitors: number
+      pageViews: number
+      productClicks: number
+      addToCart: number
+    }
   }
 }
 
@@ -38,11 +44,18 @@ export default function AdminDashboard() {
     { label: 'Total Customers', value: stats.totalCustomers, icon: '👥', color: '#1d4ed8' },
   ]
 
-  const ANALYTICS_CARDS = [
-    { label: 'Visitors Today', value: stats.analytics?.visitorsToday ?? 0, icon: '👁️', color: '#7c3aed' },
-    { label: 'Page Views Today', value: stats.analytics?.pageviewsToday ?? 0, icon: '📄', color: '#0891b2' },
-    { label: 'Add to Cart (7d)', value: stats.analytics?.totalAddToCartWeek ?? 0, icon: '🛒', color: '#ea580c' },
-    { label: 'Total Reviews', value: stats.totalReviews, icon: '⭐', color: '#ca8a04' },
+  const TRAFFIC_CARDS = [
+    { label: 'Unique Visitors', value: (stats.analytics?.lifetime?.visitors ?? 0).toLocaleString(), icon: '👤', color: '#7c3aed', sub: 'Lifetime' },
+    { label: 'Page Views', value: (stats.analytics?.lifetime?.pageViews ?? 0).toLocaleString(), icon: '📄', color: '#0891b2', sub: 'Lifetime' },
+    { label: 'Visitors Today', value: stats.analytics?.visitorsToday ?? 0, icon: '👁️', color: '#059669', sub: 'Today' },
+    { label: 'Views Today', value: stats.analytics?.pageviewsToday ?? 0, icon: '📈', color: '#2563eb', sub: 'Today' },
+  ]
+
+  const ENGAGEMENT_CARDS = [
+    { label: 'Product Clicks', value: stats.analytics?.lifetime?.productClicks ?? 0, icon: '🔥', color: '#ea580c', sub: 'Lifetime' },
+    { label: 'Add to Cart', value: stats.analytics?.lifetime?.addToCart ?? 0, icon: '🛒', color: '#db2777', sub: 'Lifetime' },
+    { label: 'Add to Cart (7d)', value: stats.analytics?.totalAddToCartWeek ?? 0, icon: '🛍️', color: '#ca8a04', sub: 'Last 7 days' },
+    { label: 'Total Reviews', value: stats.totalReviews, icon: '⭐', color: '#9333ea', sub: 'All time' },
   ]
 
   return (
@@ -74,22 +87,45 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      {/* Analytics cards */}
-      <div className="grid-4" style={{ marginBottom: '2.5rem' }}>
-        {ANALYTICS_CARDS.map(card => (
-          <div key={card.label} className="admin-card" style={{ background: 'var(--cream)', border: '1px solid var(--border-light)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div className="admin-stat">
-                <div className="admin-stat-value" style={{ color: card.color, fontSize: '2rem' }}>{card.value}</div>
-                <div className="admin-stat-label">{card.label}</div>
+      {/* Traffic Overview */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <p style={{ fontSize: '0.72rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Traffic Overview</p>
+        <div className="grid-4" style={{ marginBottom: '1.5rem' }}>
+          {TRAFFIC_CARDS.map(card => (
+            <div key={card.label} className="admin-card" style={{ background: 'var(--cream)', border: '1px solid var(--border-light)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div className="admin-stat">
+                  <div className="admin-stat-value" style={{ color: card.color, fontSize: '2rem' }}>{card.value}</div>
+                  <div className="admin-stat-label">{card.label}</div>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{card.sub}</div>
+                </div>
+                <span style={{ fontSize: '1.5rem' }}>{card.icon}</span>
               </div>
-              <span style={{ fontSize: '1.5rem' }}>{card.icon}</span>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2.5rem' }}>
+      {/* Engagement */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <p style={{ fontSize: '0.72rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Engagement</p>
+        <div className="grid-4" style={{ marginBottom: '1.5rem' }}>
+          {ENGAGEMENT_CARDS.map(card => (
+            <div key={card.label} className="admin-card" style={{ background: 'var(--white)', border: '1px solid var(--border-light)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div className="admin-stat">
+                  <div className="admin-stat-value" style={{ color: card.color, fontSize: '1.8rem' }}>{card.value}</div>
+                  <div className="admin-stat-label">{card.label}</div>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{card.sub}</div>
+                </div>
+                <span style={{ fontSize: '1.25rem' }}>{card.icon}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="admin-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2.5rem' }}>
         {/* Alerts */}
         <div className="admin-card">
           <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '1.1rem', marginBottom: '1.25rem' }}>Inventory Alerts</h3>
@@ -142,7 +178,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Analytics Tables */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2.5rem' }}>
+      <div className="admin-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2.5rem' }}>
         {/* Top Product Clicks */}
         <div className="admin-card">
           <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '1.1rem', marginBottom: '1.25rem' }}>🔥 Most Viewed Products (7d)</h3>

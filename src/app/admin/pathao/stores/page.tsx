@@ -113,7 +113,7 @@ export default function PathaoStores() {
       {showCreate && (
         <div className="admin-card" style={{ marginBottom: '1.5rem' }}>
           <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, marginBottom: '1.25rem' }}>Create New Store</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="admin-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div className="input-group">
               <label className="label">Store Name *</label>
               <input className="input" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="3-50 characters" />
