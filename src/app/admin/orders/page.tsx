@@ -1,12 +1,20 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import SendToPathaoModal from '@/components/admin/SendToPathaoModal'
 
 interface Order {
   id: number; orderNumber: string; name: string; phone: string; status: string;
   total: number; paymentMethod: string; transactionId: string | null;
   createdAt: string; couponCode: string | null; discount: number; paidDelivery: boolean;
   address: string; city: string; notes: string | null;
+  pathaoConsignmentId: string | null; pathaoOrderStatus: string | null;
+  pathaoDeliveryFee: number | null; pathaoSentAt: string | null;
   items: Array<{ quantity: number; price: number; product: { name: string; slug: string; images: string } }>;
+}
+
+interface PathaoStore {
+  store_id: number
+  store_name: string
 }
 
 const STATUSES = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED']
@@ -18,6 +26,9 @@ export default function AdminOrders() {
   const [statusFilter, setStatusFilter] = useState('')
   const [selected, setSelected] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
+  const [stores, setStores] = useState<PathaoStore[]>([])
+  const [config, setConfig] = useState({ storeId: null as number | null })
+  const [sendModalOrder, setSendModalOrder] = useState<Order | null>(null)
 
   const loadOrders = useCallback(() => {
     setLoading(true)
@@ -29,10 +40,31 @@ export default function AdminOrders() {
 
   useEffect(() => { const t = setTimeout(loadOrders, 300); return () => clearTimeout(t) }, [loadOrders])
 
+  useEffect(() => {
+    fetch('/api/admin/pathao/stores').then(r => r.json()).then(d => setStores(d.stores || []))
+    fetch('/api/admin/pathao/config').then(r => r.json()).then(d => {
+      if (d.config?.storeId) setConfig({ storeId: d.config.storeId })
+    })
+  }, [])
+
   const updateStatus = async (id: number, status: string) => {
     await fetch(`/api/orders/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) })
     loadOrders()
     if (selected?.id === id) setSelected(s => s ? { ...s, status } : null)
+  }
+
+  const handleSent = (consignmentId: string) => {
+    loadOrders()
+    if (selected?.id === sendModalOrder?.id) {
+      setSelected(s => s ? {
+        ...s,
+        pathaoConsignmentId: consignmentId,
+        pathaoOrderStatus: 'Pending',
+        pathaoSentAt: new Date().toISOString(),
+        status: 'SHIPPED',
+      } : null)
+    }
+    setSendModalOrder(null)
   }
 
   return (
@@ -57,9 +89,9 @@ export default function AdminOrders() {
           {loading ? <div style={{ textAlign: 'center', padding: '2rem' }}><div className="spinner" style={{ margin: '0 auto' }} /></div> : (
             <div className="table-wrap">
               <table>
-                <thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>TrxID</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+                <thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>TrxID</th><th>Total</th><th>Status</th><th>Pathao</th><th>Date</th></tr></thead>
                 <tbody>
-                  {orders.length === 0 && <tr><td colSpan={7} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>No orders found</td></tr>}
+                  {orders.length === 0 && <tr><td colSpan={8} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>No orders found</td></tr>}
                   {orders.map(o => (
                     <tr key={o.id} style={{ cursor: 'pointer', background: selected?.id === o.id ? 'var(--cream)' : '' }} onClick={() => setSelected(o)}>
                       <td style={{ fontFamily: 'var(--font-serif)', color: 'var(--gold)', whiteSpace: 'nowrap' }}>{o.orderNumber}</td>
@@ -68,6 +100,13 @@ export default function AdminOrders() {
                       <td style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{o.transactionId || '—'}</td>
                       <td style={{ whiteSpace: 'nowrap' }}>৳{o.total.toLocaleString()}</td>
                       <td><span className={`badge ${STATUS_COLORS[o.status] || 'badge-gray'}`}>{o.status}</span></td>
+                      <td onClick={e => e.stopPropagation()}>
+                        {o.pathaoConsignmentId ? (
+                          <a href={`/track?consignment=${o.pathaoConsignmentId}`} target="_blank" style={{ fontSize: '0.72rem', color: 'var(--gold)' }}>🔍 Track</a>
+                        ) : (
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>—</span>
+                        )}
+                      </td>
                       <td style={{ fontSize: '0.78rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{new Date(o.createdAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
@@ -96,6 +135,12 @@ export default function AdminOrders() {
               ...(selected.couponCode ? [['Coupon', selected.couponCode]] : []),
               ['Discount', selected.discount ? `৳${selected.discount.toLocaleString()}` : '—'],
               ...(selected.notes ? [['Notes', selected.notes]] : []),
+              ...(selected.pathaoConsignmentId ? [
+                ['Pathao ID', selected.pathaoConsignmentId],
+                ['Pathao Status', selected.pathaoOrderStatus || '—'],
+                ['Pathao Fee', selected.pathaoDeliveryFee ? `৳${selected.pathaoDeliveryFee}` : '—'],
+                ['Sent At', selected.pathaoSentAt ? new Date(selected.pathaoSentAt).toLocaleString() : '—'],
+              ] : []),
             ].map(([k, v]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid var(--border-light)', fontSize: '0.85rem' }}>
                 <span style={{ color: 'var(--text-muted)' }}>{k}</span>
@@ -122,6 +167,19 @@ export default function AdminOrders() {
               <span style={{ fontFamily: 'var(--font-serif)' }}>Total</span>
               <span style={{ fontFamily: 'var(--font-serif)', color: 'var(--gold)', fontWeight: 500 }}>৳{selected.total.toLocaleString()}</span>
             </div>
+
+            {selected.pathaoConsignmentId ? (
+              <div style={{ marginTop: '1.25rem' }}>
+                <a href={`/track?consignment=${selected.pathaoConsignmentId}`} target="_blank" className="btn btn-outline btn-block btn-sm" style={{ fontSize: '0.72rem' }}>
+                  🔍 Track Parcel
+                </a>
+              </div>
+            ) : selected.status !== 'CANCELLED' && selected.status !== 'DELIVERED' && (
+              <div style={{ marginTop: '1.25rem' }}>
+                <button className="btn btn-primary btn-block btn-sm" onClick={() => setSendModalOrder(selected)}>🚚 Send to Pathao</button>
+              </div>
+            )}
+
             <div style={{ marginTop: '1.25rem' }}>
               <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Update Status</p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -133,6 +191,14 @@ export default function AdminOrders() {
           </div>
         )}
       </div>
+
+      <SendToPathaoModal
+        order={sendModalOrder}
+        stores={stores}
+        defaultStoreId={config.storeId}
+        onClose={() => setSendModalOrder(null)}
+        onSent={handleSent}
+      />
     </div>
   )
 }

@@ -25,7 +25,14 @@ const OrderSchema = new mongoose.Schema({
   transactionId: { type: String, default: null },
   couponCode: { type: String, default: null },
   paidDelivery: { type: Boolean, default: false },
-  discountBreakdown: { type: mongoose.Schema.Types.Mixed, default: {} }
+  discountBreakdown: { type: mongoose.Schema.Types.Mixed, default: {} },
+  // Pathao Courier fields
+  pathaoConsignmentId: { type: String, default: null },
+  pathaoOrderStatus: { type: String, default: null },
+  pathaoDeliveryFee: { type: Number, default: null },
+  pathaoSentAt: { type: Date, default: null },
+  pathaoStoreId: { type: Number, default: null },
+  pathaoPayload: { type: mongoose.Schema.Types.Mixed, default: null }
 }, {
   timestamps: true,
   _id: false

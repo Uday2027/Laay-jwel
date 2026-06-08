@@ -91,6 +91,7 @@ export default function Footer() {
             {[
               ['Login / Register', '/account'],
               ['My Orders', '/account'],
+              ['Track Order', '/track'],
               ['Checkout', '/checkout'],
             ].map(([label, href]) => (
               <Link key={label} href={href} className="footer-link">{label}</Link>

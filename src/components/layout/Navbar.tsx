@@ -71,6 +71,7 @@ export default function Navbar() {
 
           {/* Right nav */}
           <nav className={styles.navRight}>
+            <Link href="/track" className={styles.navLink}>Track</Link>
             <Link href="/shop?category=RINGS" className={styles.navLink}>Rings</Link>
             
             {/* Search Button */}
@@ -107,6 +108,7 @@ export default function Navbar() {
           <div className={styles.mobileMenu}>
             <Link href="/" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Home</Link>
             <Link href="/shop" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>All Jewelry</Link>
+            <Link href="/track" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Track Order</Link>
             {JEWELRY_LINKS.map(l => (
               <Link key={l.href} href={l.href} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>{l.label}</Link>
             ))}

@@ -12,7 +12,15 @@ const SettingsSchema = new mongoose.Schema({
   bannerActive: { type: Boolean, default: false },
   storeName: { type: String, default: 'Laay' },
   storeEmail: { type: String, default: '' },
-  storePhone: { type: String, default: '' }
+  storePhone: { type: String, default: '' },
+  // Pathao Courier settings
+  pathaoBaseUrl: { type: String, default: 'https://courier-api-sandbox.pathao.com' },
+  pathaoClientId: { type: String, default: '' },
+  pathaoClientSecret: { type: String, default: '' },
+  pathaoUsername: { type: String, default: '' },
+  pathaoPassword: { type: String, default: '' },
+  pathaoStoreId: { type: Number, default: null },
+  pathaoEnabled: { type: Boolean, default: false }
 }, {
   _id: false
 })

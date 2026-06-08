@@ -280,6 +280,8 @@ textarea.input { resize: vertical; min-height: 100px; }
   margin-left: 260px; flex: 1; padding: 2rem;
   background: var(--cream); min-height: 100vh;
 }
+.admin-mobile-header { display: none; }
+.admin-sidebar-overlay { display: none; }
 .admin-nav-item {
   display: flex; align-items: center; gap: 0.75rem;
   padding: 0.85rem 1.5rem; font-size: 0.82rem; font-weight: 400;
@@ -397,15 +399,59 @@ tbody tr:last-child td { border-bottom: none; }
   /* Product card — tighter padding */
   .product-card-wrap { font-size: 0.85rem; }
 
-  /* Admin — stack sidebar */
-  .admin-layout { flex-direction: column; }
+  /* Admin — mobile hamburger sidebar */
   .admin-sidebar {
-    position: static; width: 100%; flex-direction: row;
-    flex-wrap: wrap; padding: 0.75rem;
-    height: auto; overflow: visible;
+    position: fixed; left: -260px; top: 0; bottom: 0;
+    width: 260px; z-index: 50;
+    transition: left 0.3s ease;
   }
-  .admin-main { margin-left: 0; padding: 1rem; }
-  .admin-nav-item { padding: 0.5rem 0.75rem; font-size: 0.7rem; }
+  .admin-sidebar.open { left: 0; }
+  .admin-sidebar-overlay { display: block; }
+  .admin-main { margin-left: 0; padding: 1rem; padding-top: 4rem; }
+  .admin-mobile-header {
+    display: flex !important;
+    align-items: center; gap: 0.75rem;
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 56px; padding: 0 1rem;
+    background: var(--white); z-index: 30;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .admin-hamburger {
+    display: flex; flex-direction: column; gap: 4px;
+    background: none; border: none; cursor: pointer; padding: 0.5rem;
+  }
+  .admin-hamburger span {
+    display: block; width: 22px; height: 2px;
+    background: var(--charcoal); border-radius: 1px;
+  }
+
+  /* Admin grids — force single column */
+  .admin-tracking-grid { grid-template-columns: 1fr !important; }
+  .admin-main [style*="gridTemplateColumns: '1fr 380px'"] { grid-template-columns: 1fr !important; }
+  .admin-main [style*="gridTemplateColumns: '1fr 420px'"] { grid-template-columns: 1fr !important; }
+  .admin-main [style*="gridTemplateColumns: \"1fr 380px\""] { grid-template-columns: 1fr !important; }
+  .admin-main [style*="gridTemplateColumns: \"1fr 420px\""] { grid-template-columns: 1fr !important; }
+
+  /* Admin detail panels — no sticky on mobile */
+  .admin-detail-panel { position: static !important; }
+
+  /* Admin filter bar */
+  .admin-filter-bar { flex-direction: column; }
+  .admin-filter-bar .input,
+  .admin-filter-bar select,
+  .admin-filter-bar .btn {
+    width: 100% !important;
+    min-width: auto !important;
+  }
+
+  /* Tables — tighter padding */
+  thead th { padding: 0.6rem 0.75rem; font-size: 0.65rem; }
+  tbody td { padding: 0.75rem; font-size: 0.8rem; }
+
+  /* Pathao modal — full width stacked */
+  .admin-main [style*="maxWidth: 900"] { max-width: 100% !important; margin: 0 !important; }
+  .admin-main [style*="gridTemplateColumns: '1fr 320px'"] { grid-template-columns: 1fr !important; }
+  .admin-main [style*="gridTemplateColumns: \"1fr 320px\""] { grid-template-columns: 1fr !important; }
 }
 
 @media (max-width: 480px) {
